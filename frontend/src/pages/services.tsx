@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { motion, useReducedMotion, type Variants } from 'motion/react'
 import './services.css'
 
 const SERVICES = [
@@ -41,10 +42,39 @@ const SERVICES = [
 ]
 
 export default function Services() {
+  const shouldReduceMotion = useReducedMotion()
+
+  const containerVariants: Variants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.05,
+      },
+    },
+  }
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  }
+
   return (
     <>
       {/* ── PAGE HERO ── */}
-      <section className="page-hero">
+      <motion.section 
+        className="page-hero"
+        initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      >
         <div className="container">
           <span className="badge badge-accent">What We Offer</span>
           <h1>Professional Drone Services</h1>
@@ -53,14 +83,25 @@ export default function Services() {
             team delivers industry-leading aerial solutions tailored to your project.
           </p>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── SERVICES LIST ── */}
       <section className="services-page">
         <div className="container">
-          <div className="services-list">
+          <motion.div 
+            className="services-list"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+          >
             {SERVICES.map(s => (
-              <div key={s.title} className="service-detail-card">
+              <motion.div 
+                key={s.title} 
+                className="service-detail-card"
+                variants={itemVariants}
+                whileHover={{ y: -3, transition: { duration: 0.22, ease: 'easeOut' } }}
+              >
                 <div className="svc-icon-wrap">{s.icon}</div>
                 <div className="svc-body">
                   <h2>{s.title}</h2>
@@ -74,9 +115,9 @@ export default function Services() {
                 <div className="svc-action">
                   <Link to="/contact" className="btn-primary">Enquire Now</Link>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
     </>
