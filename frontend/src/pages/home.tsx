@@ -5,26 +5,22 @@ const SERVICES = [
   { 
     icon: '🎬', 
     title: 'Aerial Cinematography', 
-    desc: 'Cinematic 4K/6K RAW footage for films, events, and real-estate with gimbal-stabilised platforms.',
-    tag: 'Cinema Grade'
+    desc: 'Cinematic 4K/6K RAW footage for films, events, and real-estate with gimbal-stabilised platforms.'
   },
   { 
     icon: '🔍', 
     title: 'Industrial Inspection', 
-    desc: 'Thermal and high-zoom visual inspection of towers, bridges, pipelines, and industrial infrastructure.',
-    tag: 'Thermal & Zoom'
+    desc: 'Thermal and high-zoom visual inspection of towers, bridges, pipelines, and industrial infrastructure.'
   },
   { 
     icon: '🌾', 
     title: 'Precision Agriculture', 
-    desc: 'NDVI multispectral mapping and crop stress analysis to optimise yield and minimise input costs.',
-    tag: 'NDVI Mapping'
+    desc: 'NDVI multispectral mapping and crop stress analysis to optimise yield and minimise input costs.'
   },
   { 
     icon: '🗺️', 
     title: '3D Mapping & Survey', 
-    desc: 'Centimetre-accurate photogrammetry and LiDAR surveys for construction, GIS, and civil projects.',
-    tag: 'RTK Sub-cm'
+    desc: 'Centimetre-accurate photogrammetry and LiDAR surveys for construction, GIS, and civil projects.'
   },
 ]
 
@@ -32,10 +28,9 @@ const COURSES = [
   {
     title: 'DGCA Certified Remote Pilot Course',
     duration: '30 days',
-    level: 'Beginner to Pro',
-    desc: 'Full ground school theory and hands-on flight training leading to an official DGCA Remote Pilot Certificate.',
+    level: 'Beginner',
+    desc: 'Full ground school theory and flight training leading to an official DGCA Remote Pilot Certificate.',
     badge: 'DGCA Certified',
-    badgeClass: 'badge-emerald',
   },
   {
     title: 'Night Operations & BVLOS',
@@ -43,103 +38,77 @@ const COURSES = [
     level: 'Advanced',
     desc: 'Specialised flight protocols for beyond-visual-line-of-sight and night surveillance flight operations.',
     badge: 'Specialised',
-    badgeClass: 'badge-cyan',
   },
   {
     title: 'Drone Assembly & Maintenance',
     duration: '7 days',
     level: 'Intermediate',
     desc: 'Hands-on avionics, wiring, calibration, and troubleshooting for multi-rotor commercial drones.',
-    badge: 'Hands-on Lab',
-    badgeClass: 'badge-accent',
+    badge: 'Hands-on',
   },
 ]
 
-const STATS = [
-  { number: '500+', label: 'Successful Flight Missions' },
-  { number: '100%', label: 'DGCA Compliance Record' },
-  { number: '50+', label: 'Enterprise & Govt Clients' },
-  { number: '4.9★', label: 'Average Pilot Rating' },
+const CAPABILITY_BADGES = [
+  'DGCA / Certified training',
+  'AI / Support assistant',
+  '24/7 / Information access',
 ]
 
 export default function Home() {
+  const handleOpenChat = () => {
+    window.dispatchEvent(new CustomEvent('open-chatbot'))
+  }
+
   return (
     <>
       {/* ── HERO ── */}
       <section className="hero">
-        {/* Ambient Mesh Glows */}
-        <div className="hero-glow-blob blob-1" aria-hidden="true" />
-        <div className="hero-glow-blob blob-2" aria-hidden="true" />
-        <div className="hero-grid" aria-hidden="true" />
-
         <div className="container hero-inner">
           <div className="hero-content">
-            <div className="hero-tag">
-              <span className="hero-tag-dot" />
-              <span>DGCA Certified Aerial Solutions</span>
-            </div>
-            
-            <h1 className="hero-title">
-              The Sky Is Your<br />
-              <span className="highlight-gradient">Competitive Edge</span>
-            </h1>
+            <h1 className="hero-title">See the ground before you fly.</h1>
 
             <p className="hero-desc">
-              DroneTV delivers enterprise aerial intelligence — from cinematic RAW production
-              to precision multispectral surveys — powered by certified master pilots and
-              state-of-the-art UAV fleets.
+              AI-guided support for DroneTV's training programs and aerial survey services.
             </p>
 
             <div className="hero-actions">
-              <Link to="/services" className="btn-primary">
-                Explore Services <span className="btn-arrow">→</span>
-              </Link>
-              <Link to="/contact" className="btn-secondary">
-                Request Custom Quote
-              </Link>
+              <button 
+                type="button" 
+                className="btn-primary" 
+                onClick={handleOpenChat}
+              >
+                Ask the assistant
+              </button>
             </div>
 
-            {/* Quick Stats Bar */}
-            <div className="hero-stats-row">
-              {STATS.map((stat, i) => (
-                <div key={i} className="hero-stat-item">
-                  <strong>{stat.number}</strong>
-                  <span>{stat.label}</span>
+            {/* Exactly 3 Approved Capability Badges */}
+            <div className="hero-capabilities">
+              {CAPABILITY_BADGES.map((badgeText, idx) => (
+                <div key={idx} className="capability-badge">
+                  {badgeText}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Interactive Holographic Drone Visual */}
+          {/* Plain SVG Radar Graphic */}
           <div className="hero-visual" aria-hidden="true">
-            <div className="drone-hologram">
-              <div className="radar-sweep" />
-              <div className="drone-ring ring-1" />
-              <div className="drone-ring ring-2" />
-              <div className="drone-ring ring-3" />
-              
-              {/* Floating Drone Core */}
-              <div className="drone-core">
-                <span className="drone-core-icon">🛸</span>
-                <span className="drone-shadow" />
-              </div>
-
-              {/* Floating Telemetry Chips */}
-              <div className="telemetry-chip chip-1">
-                <span className="chip-indicator" />
-                <span className="chip-text">RTK GPS • 0.8cm</span>
-              </div>
-
-              <div className="telemetry-chip chip-2">
-                <span className="chip-indicator" />
-                <span className="chip-text">4K 60FPS • ProRes</span>
-              </div>
-
-              <div className="telemetry-chip chip-3">
-                <span className="chip-indicator" />
-                <span className="chip-text">DGCA Authorized</span>
-              </div>
-            </div>
+            <svg
+              width="320"
+              height="320"
+              viewBox="0 0 320 320"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="hero-radar-svg"
+            >
+              {/* Outer circles in #4B5A6B */}
+              <circle cx="160" cy="160" r="140" stroke="#4B5A6B" strokeWidth="1.5" />
+              <circle cx="160" cy="160" r="95" stroke="#4B5A6B" strokeWidth="1.5" />
+              {/* Inner circle in #7A9B7E */}
+              <circle cx="160" cy="160" r="50" stroke="#7A9B7E" strokeWidth="1.5" />
+              {/* One line from center to edge in #F2A63C */}
+              <line x1="160" y1="160" x2="259" y2="61" stroke="#F2A63C" strokeWidth="2" strokeLinecap="round" />
+            </svg>
           </div>
         </div>
       </section>
@@ -148,8 +117,8 @@ export default function Home() {
       <section className="services-section">
         <div className="container">
           <div className="section-header">
-            <span className="badge badge-accent">Enterprise Capabilities</span>
-            <h2 className="section-title" style={{ marginTop: '0.85rem' }}>Our Core Drone Services</h2>
+            <span className="badge badge-accent">Services</span>
+            <h2 className="section-title" style={{ marginTop: '0.75rem' }}>Our Core Services</h2>
             <p className="section-subtitle">
               From high-resolution aerial cinematography to millimeter-accurate GIS terrain models.
             </p>
@@ -158,22 +127,19 @@ export default function Home() {
           <div className="services-grid">
             {SERVICES.map(s => (
               <div key={s.title} className="service-card">
-                <div className="service-card-top">
-                  <div className="service-icon">{s.icon}</div>
-                  <span className="service-tag">{s.tag}</span>
-                </div>
+                <div className="service-icon">{s.icon}</div>
                 <h3>{s.title}</h3>
                 <p>{s.desc}</p>
                 <Link to="/services" className="service-learn-more">
-                  Explore service <span>→</span>
+                  Learn more →
                 </Link>
               </div>
             ))}
           </div>
 
-          <div className="services-footer-cta">
+          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
             <Link to="/services" className="btn-secondary">
-              View All 6 Specialized Services →
+              View All Services →
             </Link>
           </div>
         </div>
@@ -183,27 +149,25 @@ export default function Home() {
       <section className="courses-section">
         <div className="container">
           <div className="section-header">
-            <span className="badge badge-emerald">Pilot Academy</span>
-            <h2 className="section-title" style={{ marginTop: '0.85rem' }}>DGCA Pilot Training & Certifications</h2>
+            <span className="badge badge-sage">Training</span>
+            <h2 className="section-title" style={{ marginTop: '0.75rem' }}>Pilot Training & Courses</h2>
             <p className="section-subtitle">
-              Learn from certified flight instructors at our Mumbai facility with hands-on simulator and field hours.
+              DGCA-recognised programmes designed for aspiring pilots and industry professionals.
             </p>
           </div>
 
           <div className="courses-grid">
             {COURSES.map(c => (
               <div key={c.title} className="course-card">
-                <div className="course-card-badge-row">
-                  <span className={`badge ${c.badgeClass}`}>{c.badge}</span>
-                  <span className="course-level-pill">{c.level}</span>
-                </div>
+                <span className="badge badge-sage">{c.badge}</span>
                 <h3>{c.title}</h3>
                 <div className="course-meta">
                   <span>⏱ Duration: {c.duration}</span>
+                  <span style={{ marginLeft: '1rem' }}>📊 Level: {c.level}</span>
                 </div>
                 <p>{c.desc}</p>
                 <Link to="/courses" className="course-link">
-                  View Syllabus & Enrol <span>→</span>
+                  View Syllabus →
                 </Link>
               </div>
             ))}
@@ -215,17 +179,20 @@ export default function Home() {
       <section className="cta-banner">
         <div className="container cta-container">
           <div className="cta-content">
-            <span className="badge badge-accent">Get Started</span>
-            <h2>Ready to Elevate Your Operations?</h2>
-            <p>
-              Connect with our flight operations team or ask our AI assistant for immediate service estimates and curriculum details.
+            <h2 style={{ color: '#EDEDE4', marginBottom: '0.75rem' }}>Ready to Get Started?</h2>
+            <p style={{ color: '#94A3B8', marginBottom: '1.75rem' }}>
+              Connect with our team or ask our AI assistant to find the right training course or aerial survey service.
             </p>
             <div className="cta-actions">
-              <Link to="/contact" className="btn-primary">
-                Submit an Enquiry <span>→</span>
-              </Link>
-              <Link to="/courses" className="btn-secondary">
-                Browse Training Courses
+              <button 
+                type="button" 
+                className="btn-primary" 
+                onClick={handleOpenChat}
+              >
+                Ask the assistant
+              </button>
+              <Link to="/contact" className="btn-secondary">
+                Contact Us
               </Link>
             </div>
           </div>
