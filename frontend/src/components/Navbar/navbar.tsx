@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { motion } from 'motion/react'
 import gsap from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import './navbar.css'
@@ -104,7 +105,7 @@ export default function Navbar() {
           <span className="logo-text">Drone<span className="logo-accent">TV</span></span>
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation with Motion Shared Layout Active Indicator */}
         <nav className="navbar-links" aria-label="Main navigation">
           {NAV_ITEMS.map(item => {
             const isActive = activeSection === item.id && location.pathname === '/'
@@ -114,7 +115,18 @@ export default function Navbar() {
                 className={`nav-item-btn ${isActive ? 'is-active' : ''}`}
                 onClick={() => scrollToSection(item.id)}
               >
-                {item.label}
+                <span className="nav-item-text">{item.label}</span>
+                {isActive && (
+                  <motion.span
+                    className="nav-active-pill"
+                    layoutId="navbarActiveIndicator"
+                    transition={{
+                      type: 'spring',
+                      stiffness: 380,
+                      damping: 30,
+                    }}
+                  />
+                )}
               </button>
             )
           })}
