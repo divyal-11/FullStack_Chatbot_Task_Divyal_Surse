@@ -130,16 +130,16 @@
 /* ── SECTION HEADERS ── */
 .section-header {
   text-align: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2.25rem;
 }
 
 .section-header .section-subtitle {
-  margin: 0.85rem auto 0;
+  margin: 0.75rem auto 0;
 }
 
 /* ── SERVICES SECTION ── */
 .services-section {
-  padding: 6.5rem 0;
+  padding: 2.75rem 0 3.75rem;
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border);
   position: relative;
@@ -262,7 +262,7 @@
 
 /* ── COURSES SECTION ── */
 .courses-section {
-  padding: 6.5rem 0;
+  padding: 2.75rem 0 3.75rem;
   background: var(--bg-primary);
   border-bottom: 1px solid var(--border);
   position: relative;
@@ -408,7 +408,7 @@
 
 /* ── CONTACT & ENQUIRY SECTION ── */
 .contact-section {
-  padding: 6.5rem 0;
+  padding: 2.75rem 0 3.75rem;
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border);
   position: relative;
