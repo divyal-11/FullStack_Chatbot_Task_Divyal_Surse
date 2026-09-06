@@ -21,6 +21,15 @@
     inset 0 0 40px rgba(16, 24, 38, 0.9);
   position: relative;
   overflow: hidden;
+  transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.radar-container:hover .radar-frame {
+  border-color: rgba(242, 166, 60, 0.45);
+  box-shadow: 
+    0 0 36px rgba(0, 0, 0, 0.8),
+    0 0 24px rgba(242, 166, 60, 0.15),
+    inset 0 0 40px rgba(16, 24, 38, 0.9);
 }
 
 /* SVG Instrument Layer */
