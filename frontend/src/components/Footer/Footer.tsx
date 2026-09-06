@@ -33,6 +33,7 @@ export default function Footer() {
             <h4>Company</h4>
             <Link to="/contact">Contact Us</Link>
             <Link to="/contact">Get a Quote</Link>
+            <Link to="/admin">Admin</Link>
           </div>
         </div>
       </div>
