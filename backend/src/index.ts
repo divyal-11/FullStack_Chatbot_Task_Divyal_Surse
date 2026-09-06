@@ -1,14 +1,8 @@
-import express from "express";
+import app from "./app";
+import { env } from "./config/env";
 
-const app = express();
-const PORT = process.env.PORT || 5000;
-
-app.use(express.json());
-
-app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(env.PORT, () => {
+  console.log(`🚀 DroneTV Backend running on http://localhost:${env.PORT}`);
+  console.log(`📡 Health Check: http://localhost:${env.PORT}/api/health`);
+  console.log(`📋 Enquiries API: http://localhost:${env.PORT}/api/enquiries`);
 });
