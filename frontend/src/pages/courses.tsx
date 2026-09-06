@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { motion, useReducedMotion, type Variants } from 'motion/react'
 import './courses.css'
 import './services.css'
 
@@ -91,10 +92,39 @@ const COURSES = [
 ]
 
 export default function Courses() {
+  const shouldReduceMotion = useReducedMotion()
+
+  const containerVariants: Variants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.05,
+      },
+    },
+  }
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  }
+
   return (
     <>
       {/* ── PAGE HERO ── */}
-      <section className="page-hero">
+      <motion.section 
+        className="page-hero"
+        initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      >
         <div className="container">
           <span className="badge badge-sage">Training Academy</span>
           <h1>Pilot Training & Courses</h1>
@@ -103,14 +133,25 @@ export default function Courses() {
             and creative content creators at every skill level.
           </p>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── COURSES GRID ── */}
       <section className="courses-page">
         <div className="container">
-          <div className="courses-page-grid">
+          <motion.div 
+            className="courses-page-grid"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+          >
             {COURSES.map(c => (
-              <div key={c.title} className="course-detail-card">
+              <motion.div 
+                key={c.title} 
+                className="course-detail-card"
+                variants={itemVariants}
+                whileHover={{ y: -3, transition: { duration: 0.22, ease: 'easeOut' } }}
+              >
                 <div className="course-card-header">
                   <h2>{c.title}</h2>
                   <span className={`badge badge-${c.badgeType}`}>{c.badge}</span>
@@ -145,9 +186,9 @@ export default function Courses() {
                 </div>
 
                 <Link to="/contact" className="btn-primary">Enrol Now</Link>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
     </>
