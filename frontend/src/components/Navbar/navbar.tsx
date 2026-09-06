@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
@@ -25,30 +25,41 @@ export default function Navbar() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  // Track active section and scroll state
+  const isAutoScrolling = useRef(false)
+  const rafId = useRef<number | null>(null)
+
+  // Track active section and scroll state with RAF throttling
   const handleScroll = useCallback(() => {
-    const scrollY = window.scrollY
-    setIsScrolled(scrollY > 20)
+    if (rafId.current !== null) return
 
-    if (location.pathname !== '/') return
+    rafId.current = requestAnimationFrame(() => {
+      rafId.current = null
+      const scrollY = window.scrollY
+      setIsScrolled(scrollY > 20)
 
-    const navOffset = 90
-    const sections = NAV_ITEMS.map(item => document.getElementById(item.id)).filter(Boolean) as HTMLElement[]
+      if (isAutoScrolling.current || location.pathname !== '/') return
 
-    for (let i = sections.length - 1; i >= 0; i--) {
-      const section = sections[i]
-      const top = section.offsetTop - navOffset
-      if (scrollY >= top) {
-        setActiveSection(section.id)
-        break
+      const navOffset = 90
+      const sections = NAV_ITEMS.map(item => document.getElementById(item.id)).filter(Boolean) as HTMLElement[]
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i]
+        const top = section.offsetTop - navOffset
+        if (scrollY >= top) {
+          setActiveSection(section.id)
+          break
+        }
       }
-    }
+    })
   }, [location.pathname])
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (rafId.current !== null) cancelAnimationFrame(rafId.current)
+    }
   }, [handleScroll])
 
   // Smooth Section Scrolling
@@ -66,13 +77,20 @@ export default function Navbar() {
     const navOffset = 72
     const targetY = element.getBoundingClientRect().top + window.pageYOffset - navOffset
 
+    // Cancel any ongoing tweens
+    gsap.killTweensOf(window)
+
+    // Update active section immediately for instantaneous visual response
+    setActiveSection(sectionId)
+    isAutoScrolling.current = true
+
     // GSAP Butter-Smooth Glide
     gsap.to(window, {
-      duration: 0.95,
+      duration: 0.65,
       scrollTo: { y: targetY, autoKill: false },
-      ease: 'power3.inOut',
+      ease: 'power2.out',
       onComplete: () => {
-        setActiveSection(sectionId)
+        isAutoScrolling.current = false
       },
     })
   }

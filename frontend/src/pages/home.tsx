@@ -182,10 +182,11 @@ export default function Home() {
     const contactEl = document.getElementById('contact')
     if (contactEl) {
       const targetY = contactEl.getBoundingClientRect().top + window.pageYOffset - 72
+      gsap.killTweensOf(window)
       gsap.to(window, {
-        duration: 0.95,
+        duration: 0.65,
         scrollTo: { y: targetY, autoKill: false },
-        ease: 'power3.inOut',
+        ease: 'power2.out',
       })
     }
   }

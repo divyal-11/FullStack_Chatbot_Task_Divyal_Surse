@@ -24,12 +24,13 @@ function App() {
       if (el) {
         setTimeout(() => {
           const targetY = el.getBoundingClientRect().top + window.pageYOffset - 72
+          gsap.killTweensOf(window)
           gsap.to(window, {
-            duration: 0.85,
+            duration: 0.65,
             scrollTo: { y: targetY, autoKill: false },
-            ease: 'power3.inOut',
+            ease: 'power2.out',
           })
-        }, 150)
+        }, 120)
       }
     }
   }, [location])
