@@ -20,7 +20,6 @@ export default function Navbar() {
           <NavLink to="/services" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Services</NavLink>
           <NavLink to="/courses" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Courses</NavLink>
           <NavLink to="/contact" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Contact</NavLink>
-          <NavLink to="/admin" className={({ isActive }) => isActive ? 'nav-link nav-link--admin active' : 'nav-link nav-link--admin'}>Admin</NavLink>
         </nav>
 
         {/* CTA */}
@@ -46,7 +45,6 @@ export default function Navbar() {
           <NavLink to="/services" className="mobile-link" onClick={() => setMenuOpen(false)}>Services</NavLink>
           <NavLink to="/courses" className="mobile-link" onClick={() => setMenuOpen(false)}>Courses</NavLink>
           <NavLink to="/contact" className="mobile-link" onClick={() => setMenuOpen(false)}>Contact</NavLink>
-          <NavLink to="/admin" className="mobile-link" onClick={() => setMenuOpen(false)}>Admin</NavLink>
         </nav>
       )}
     </header>
