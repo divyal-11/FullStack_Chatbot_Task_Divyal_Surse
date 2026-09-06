@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { submitEnquiry } from '../../utils/api'
 import type { UserType } from '../../types'
 import './Chatbot.css'
@@ -172,120 +173,157 @@ export default function Chatbot() {
     sessionStorage.removeItem('dronetv-chat-history')
   }
 
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <div className="chatbot-widget" aria-label="DroneTV AI Support Assistant">
-      {/* Chat Window */}
-      {open && (
-        <div className="chatbot-window">
-          {/* Header */}
-          <div className="chatbot-header">
-            <div className="chatbot-avatar-wrap">◈</div>
-            <div className="chatbot-header-info">
-              <strong>DroneTV AI Assistant</strong>
-              <div className="chatbot-status-row">
-                <span className="chatbot-status-indicator" />
-                <span>Active Telemetry • Ready</span>
-              </div>
-            </div>
-            <div className="chatbot-header-actions">
-              <button className="chatbot-action-btn" onClick={handleClear} title="Clear conversation" aria-label="Reset chat">
-                ↺
-              </button>
-              <button className="chatbot-action-btn" onClick={() => setOpen(false)} title="Close" aria-label="Close chat">
-                ✕
-              </button>
-            </div>
-          </div>
-
-          {/* Messages */}
-          <div className="chatbot-messages">
-            {messages.map(msg => (
-              <div key={msg.id} className={`msg ${msg.role}`}>
-                <div className="msg-bubble">
-                  {msg.text?.split('\n').map((line, i) => (
-                    <span key={i}>
-                      {line}
-                      {i < (msg.text?.split('\n').length ?? 1) - 1 ? <br /> : null}
-                    </span>
-                  ))}
-
-                  {/* Embedded Lead Capture Form */}
-                  {msg.showForm && !msg.formSubmitted && (
-                    <InChatLeadForm onSubmit={(name) => {
-                      setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, formSubmitted: true } : m))
-                      addBotResponse(`Thank you, ${name}! Your details have been submitted. Our aviation coordinator will contact you directly within 24 hours.`)
-                      setChips(INITIAL_CHIPS)
-                    }} />
-                  )}
-
-                  {msg.showForm && msg.formSubmitted && (
-                    <p style={{ fontSize: '0.8rem', color: 'var(--sage)', marginTop: '0.5rem', fontWeight: 600 }}>
-                      ✓ Details submitted successfully
-                    </p>
-                  )}
+      {/* Chat Window with Spring Open/Close Motion */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="chatbot-window"
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 22, scale: shouldReduceMotion ? 1 : 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: shouldReduceMotion ? 0 : 16, scale: shouldReduceMotion ? 1 : 0.96 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+          >
+            {/* Header */}
+            <div className="chatbot-header">
+              <div className="chatbot-avatar-wrap">◈</div>
+              <div className="chatbot-header-info">
+                <strong>DroneTV AI Assistant</strong>
+                <div className="chatbot-status-row">
+                  <span className="chatbot-status-indicator" />
+                  <span>Active Telemetry • Ready</span>
                 </div>
               </div>
-            ))}
+              <div className="chatbot-header-actions">
+                <button className="chatbot-action-btn" onClick={handleClear} title="Clear conversation" aria-label="Reset chat">
+                  ↺
+                </button>
+                <button className="chatbot-action-btn" onClick={() => setOpen(false)} title="Close" aria-label="Close chat">
+                  ✕
+                </button>
+              </div>
+            </div>
 
-            {typing && (
-              <div className="msg bot">
-                <div className="typing-indicator">
-                  <span className="typing-dot" />
-                  <span className="typing-dot" />
-                  <span className="typing-dot" />
-                </div>
+            {/* Messages */}
+            <div className="chatbot-messages">
+              {messages.map(msg => (
+                <motion.div
+                  key={msg.id}
+                  className={`msg ${msg.role}`}
+                  initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <div className="msg-bubble">
+                    {msg.text?.split('\n').map((line, i) => (
+                      <span key={i}>
+                        {line}
+                        {i < (msg.text?.split('\n').length ?? 1) - 1 ? <br /> : null}
+                      </span>
+                    ))}
+
+                    {/* Embedded Lead Capture Form */}
+                    {msg.showForm && !msg.formSubmitted && (
+                      <InChatLeadForm onSubmit={(name) => {
+                        setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, formSubmitted: true } : m))
+                        addBotResponse(`Thank you, ${name}! Your details have been submitted. Our aviation coordinator will contact you directly within 24 hours.`)
+                        setChips(INITIAL_CHIPS)
+                      }} />
+                    )}
+
+                    {msg.showForm && msg.formSubmitted && (
+                      <p style={{ fontSize: '0.8rem', color: 'var(--sage)', marginTop: '0.5rem', fontWeight: 600 }}>
+                        ✓ Details submitted successfully
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+
+              <AnimatePresence>
+                {typing && (
+                  <motion.div
+                    className="msg bot"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.18 }}
+                  >
+                    <div className="typing-indicator">
+                      <span className="typing-dot" />
+                      <span className="typing-dot" />
+                      <span className="typing-dot" />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <div ref={bottomRef} />
+            </div>
+
+            {/* Quick-Reply Chips */}
+            {chips.length > 0 && !typing && (
+              <div className="quick-replies">
+                {chips.map(chip => (
+                  <motion.button
+                    key={chip}
+                    className="quick-reply-chip"
+                    onClick={() => handleSend(chip)}
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.96 }}
+                    transition={{ duration: 0.18 }}
+                  >
+                    {chip}
+                  </motion.button>
+                ))}
               </div>
             )}
-            <div ref={bottomRef} />
-          </div>
 
-          {/* Quick-Reply Chips */}
-          {chips.length > 0 && !typing && (
-            <div className="quick-replies">
-              {chips.map(chip => (
-                <button key={chip} className="quick-reply-chip" onClick={() => handleSend(chip)}>
-                  {chip}
-                </button>
-              ))}
+            {/* Input Area */}
+            <div className="chatbot-input-area">
+              <input
+                className="chatbot-input"
+                type="text"
+                placeholder="Ask about services, DGCA courses, pricing..."
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSend()}
+                autoComplete="off"
+              />
+              <motion.button
+                className="chatbot-send"
+                onClick={() => handleSend()}
+                disabled={!input.trim()}
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.94 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                aria-label="Send query"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </motion.button>
             </div>
-          )}
-
-          {/* Input Area */}
-          <div className="chatbot-input-area">
-            <input
-              className="chatbot-input"
-              type="text"
-              placeholder="Ask about services, DGCA courses, pricing..."
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSend()}
-              autoComplete="off"
-            />
-            <button
-              className="chatbot-send"
-              onClick={() => handleSend()}
-              disabled={!input.trim()}
-              aria-label="Send query"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
-            </button>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ONE Clear Floating Chat Entry Point: "Ask DroneTV AI" */}
-      <button
+      <motion.button
         className={`chatbot-launcher-btn ${open ? 'is-open' : ''}`}
         onClick={() => setOpen(!open)}
+        whileHover={{ y: -2 }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
         aria-label={open ? 'Close Assistant' : 'Ask DroneTV AI'}
       >
         <span className="chatbot-launcher-icon">◈</span>
         <span>{open ? 'Close Assistant' : 'Ask DroneTV AI'}</span>
         {!open && <span className="chatbot-launcher-pulse" />}
-      </button>
+      </motion.button>
     </div>
   )
 }
