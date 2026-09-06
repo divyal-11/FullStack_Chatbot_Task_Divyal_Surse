@@ -41,7 +41,6 @@ export default function Footer() {
       <div className="footer-bottom">
         <div className="container">
           <p>© {new Date().getFullYear()} DroneTV. All rights reserved.</p>
-          <p>Built for IPAGE Group Full Stack Intern Assessment.</p>
         </div>
       </div>
     </footer>

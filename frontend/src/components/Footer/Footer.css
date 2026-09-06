@@ -64,10 +64,9 @@
 
 .footer-bottom .container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  text-align: center;
 }
 
 .footer-bottom p {
