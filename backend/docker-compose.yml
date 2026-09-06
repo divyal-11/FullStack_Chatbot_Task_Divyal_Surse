@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dronetv
+      POSTGRES_PASSWORD: dronetv
+      POSTGRES_DB: dronetv
+    ports:
+      - "5432:5432"
+    volumes:
+      - dronetv_pgdata:/var/lib/postgresql/data
+
+volumes:
+  dronetv_pgdata:
