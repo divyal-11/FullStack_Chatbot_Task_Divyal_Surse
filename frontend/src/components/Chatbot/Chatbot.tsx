@@ -103,7 +103,6 @@ const INITIAL_CHIPS = ['Tell me about your services', 'What courses do you offer
 // ── Component ──────────────────────────────────────────────────────────────
 export default function Chatbot() {
   const [open, setOpen] = useState(false)
-  const [teaserDismissed, setTeaserDismissed] = useState(false)
   const [messages, setMessages] = useState<Message[]>(() => {
     try {
       const saved = sessionStorage.getItem('dronetv-chat')
@@ -115,6 +114,16 @@ export default function Chatbot() {
   const [typing, setTyping] = useState(false)
   const [unread, setUnread] = useState(0)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  // Listen for global open-chatbot trigger from Hero CTA
+  useEffect(() => {
+    const handleOpenFromEvent = () => {
+      setOpen(true)
+      setUnread(0)
+    }
+    window.addEventListener('open-chatbot', handleOpenFromEvent)
+    return () => window.removeEventListener('open-chatbot', handleOpenFromEvent)
+  }, [])
 
   // Persist history
   useEffect(() => {
@@ -145,7 +154,7 @@ export default function Chatbot() {
       const botMsg: Message = { id: (Date.now() + 1).toString(), role: 'bot', text, showForm }
       setMessages(prev => [...prev, botMsg])
       setTyping(false)
-    }, 800 + Math.random() * 400)
+    }, 600)
   }
 
   const handleSend = (text?: string) => {
@@ -171,53 +180,20 @@ export default function Chatbot() {
 
   return (
     <div className="chatbot-widget" aria-label="DroneTV Chatbot">
-      {/* Welcome Callout Pill (Visible when closed) */}
-      {!open && !teaserDismissed && (
-        <div className="chatbot-teaser" onClick={handleOpen}>
-          <div className="chatbot-teaser-content">
-            <span className="chatbot-teaser-icon">👋</span>
-            <div className="chatbot-teaser-text">
-              <strong>Need Help?</strong>
-              <span>Chat with DroneTV AI</span>
-            </div>
-          </div>
-          <button 
-            className="chatbot-teaser-close" 
-            onClick={(e) => {
-              e.stopPropagation()
-              setTeaserDismissed(true)
-            }}
-            title="Dismiss tooltip"
-            aria-label="Dismiss chat tooltip"
-          >
-            ×
-          </button>
-        </div>
-      )}
-
       {/* Chat Window */}
       {open && (
         <div className="chatbot-window">
           {/* Header */}
           <div className="chatbot-header">
-            <div className="chatbot-avatar-wrap">
-              <div className="chatbot-avatar">🤖</div>
-              <span className="chatbot-avatar-pulse" />
-            </div>
             <div className="chatbot-header-info">
-              <div className="chatbot-header-title-row">
-                <strong>DroneTV AI Assistant</strong>
-                <span className="chatbot-ai-badge">Instant AI</span>
-              </div>
-              <span className="chatbot-status-online">
-                <span className="chatbot-status-dot" /> Online • Replies instantly
-              </span>
+              <strong>DroneTV Assistant</strong>
+              <span>Online • Ready to help</span>
             </div>
             <div className="chatbot-header-actions">
               <button className="chatbot-action-btn" onClick={handleClear} title="Clear conversation" aria-label="Clear chat">
                 🗑
               </button>
-              <button className="chatbot-action-btn chatbot-close-btn" onClick={() => setOpen(false)} title="Close chat" aria-label="Close chat">
+              <button className="chatbot-action-btn" onClick={() => setOpen(false)} title="Close chat" aria-label="Close chat">
                 ✕
               </button>
             </div>
@@ -227,7 +203,6 @@ export default function Chatbot() {
           <div className="chatbot-messages">
             {messages.map(msg => (
               <div key={msg.id} className={`msg ${msg.role}`}>
-                {msg.role === 'bot' && <div className="msg-avatar" title="DroneTV AI">🚁</div>}
                 <div className="msg-bubble">
                   {msg.text?.split('\n').map((line, i) => (
                     <span key={i}>{line}{i < (msg.text?.split('\n').length ?? 1) - 1 ? <br /> : null}</span>
@@ -235,19 +210,18 @@ export default function Chatbot() {
                   {msg.showForm && !msg.formSubmitted && (
                     <LeadCaptureForm onSubmit={(name) => {
                       setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, formSubmitted: true } : m))
-                      addBotResponse(`🎉 Thank you ${name}! Your enquiry has been registered. Our team will contact you within 24 hours. Anything else you'd like to explore?`)
+                      addBotResponse(`Thank you ${name}! Your enquiry has been received. Our team will reach out within 24 hours.`)
                       setChips(INITIAL_CHIPS)
                     }} />
                   )}
                   {msg.showForm && msg.formSubmitted && (
-                    <p className="chat-form-success">✅ Enquiry submitted successfully!</p>
+                    <p className="chat-form-success">✓ Enquiry submitted successfully!</p>
                   )}
                 </div>
               </div>
             ))}
             {typing && (
               <div className="msg bot">
-                <div className="msg-avatar">🚁</div>
                 <div className="typing-indicator">
                   <span className="typing-dot" />
                   <span className="typing-dot" />
@@ -274,7 +248,7 @@ export default function Chatbot() {
             <input
               className="chatbot-input"
               type="text"
-              placeholder="Ask about services, courses, pricing..."
+              placeholder="Ask a question..."
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSend()}
@@ -282,35 +256,22 @@ export default function Chatbot() {
               autoComplete="off"
             />
             <button className="chatbot-send" onClick={() => handleSend()} disabled={!input.trim()} aria-label="Send message">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
+              ➤
             </button>
           </div>
         </div>
       )}
 
-      {/* Toggle Button */}
+      {/* Floating Button Labeled Exactly: "Ask DroneTV AI" */}
       <button 
         className={`chatbot-toggle ${open ? 'is-open' : ''}`} 
         onClick={open ? () => setOpen(false) : handleOpen} 
-        aria-label={open ? 'Close Chatbot' : 'Open Chatbot with DroneTV'}
+        aria-label={open ? 'Close Chatbot' : 'Ask DroneTV AI'}
       >
-        <span className="chatbot-pulse-ring" />
         {open ? (
-          <svg className="chatbot-toggle-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
+          <span>✕ Close</span>
         ) : (
-          <div className="chatbot-toggle-inner">
-            <svg className="chatbot-toggle-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-              <line x1="8" y1="10" x2="16" y2="10"></line>
-              <line x1="8" y1="14" x2="12" y2="14"></line>
-            </svg>
-          </div>
+          <span>💬 Ask DroneTV AI</span>
         )}
         {!open && unread > 0 && <span className="chatbot-badge">{unread > 9 ? '9+' : unread}</span>}
       </button>
@@ -351,7 +312,7 @@ function LeadCaptureForm({ onSubmit }: { onSubmit: (name: string) => void }) {
 
   return (
     <form className="chat-lead-form" onSubmit={handleSubmit}>
-      <p className="chat-lead-form-title">📋 Quick Enquiry Form</p>
+      <p className="chat-lead-form-title">Quick Enquiry Form</p>
       <input className="chat-lead-input" placeholder="Your name *" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required />
       <input className="chat-lead-input" placeholder="Email *" type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} required />
       <input className="chat-lead-input" placeholder="Phone (optional)" type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} />
