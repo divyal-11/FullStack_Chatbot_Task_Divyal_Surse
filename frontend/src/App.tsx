@@ -74,9 +74,9 @@ function App() {
   }, [location])
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', overflowX: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
-      <main style={{ flex: 1, position: 'relative', width: '100%' }}>
+      <main style={{ flex: 1, position: 'relative', width: '100%', paddingTop: 'var(--nav-height)' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
