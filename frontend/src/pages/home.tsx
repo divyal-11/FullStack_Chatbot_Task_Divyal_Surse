@@ -159,7 +159,7 @@ export default function Home() {
     setForm(prev => ({ ...prev, interest: interestValue }))
     const contactEl = document.getElementById('contact')
     if (contactEl) {
-      const targetY = contactEl.getBoundingClientRect().top + window.pageYOffset - 72
+      const targetY = contactEl.getBoundingClientRect().top + window.pageYOffset - 64
       gsap.killTweensOf(window)
       gsap.to(window, {
         duration: 0.65,

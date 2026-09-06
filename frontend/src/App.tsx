@@ -61,7 +61,7 @@ function App() {
       const el = document.getElementById(targetId)
       if (el) {
         setTimeout(() => {
-          const targetY = el.getBoundingClientRect().top + window.pageYOffset - 72
+          const targetY = el.getBoundingClientRect().top + window.pageYOffset - 64
           gsap.killTweensOf(window)
           gsap.to(window, {
             duration: 0.65,
