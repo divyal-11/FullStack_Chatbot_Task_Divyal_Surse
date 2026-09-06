@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
+import { motion, useScroll, useTransform, useReducedMotion, type Variants } from 'motion/react'
 import gsap from 'gsap'
 import Radar from '../components/Radar/Radar'
 import { submitEnquiry } from '../utils/api'
 import type { UserType } from '../types'
 import './home.css'
 
-// ── Real Services Data (Preserving Project Capabilities) ────────────────────
+// ── Real Services Data ─────────────────────────────────────────────────────
 const SERVICES = [
   {
     code: 'SRV-01',
@@ -33,7 +34,7 @@ const SERVICES = [
   },
 ]
 
-// ── Real Course Data (Preserving Project Training Details) ──────────────────
+// ── Real Course Data ───────────────────────────────────────────────────────
 const COURSES = [
   {
     title: 'DGCA Certified Remote Pilot Course',
@@ -122,6 +123,17 @@ interface FormErrors {
 
 export default function Home() {
   const heroRef = useRef<HTMLElement>(null)
+  const shouldReduceMotion = useReducedMotion()
+
+  // ── Scroll-Linked Subtle Parallax for Hero ──────────────────────────────
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  })
+
+  const heroContentY = useTransform(scrollYProgress, [0, 1], [0, shouldReduceMotion ? 0 : 45])
+  const radarY = useTransform(scrollYProgress, [0, 1], [0, shouldReduceMotion ? 0 : 25])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.85], [1, shouldReduceMotion ? 1 : 0.3])
 
   // Enquiry Form State
   const [form, setForm] = useState<FormData>({
@@ -137,46 +149,12 @@ export default function Home() {
   const [submitted, setSubmitted] = useState(false)
   const [apiError, setApiError] = useState('')
 
-  // ── GSAP Staggered Page-Load Timeline ────────────────────────────────────
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-      
-      tl.fromTo('.hero-tag', 
-        { opacity: 0, y: -10 }, 
-        { opacity: 1, y: 0, duration: 0.6 }
-      )
-      .fromTo('.hero-title', 
-        { opacity: 0, y: 22 }, 
-        { opacity: 1, y: 0, duration: 0.8 }, 
-        '-=0.35'
-      )
-      .fromTo('.hero-desc', 
-        { opacity: 0, y: 16 }, 
-        { opacity: 1, y: 0, duration: 0.75 }, 
-        '-=0.45'
-      )
-      .fromTo('.hero-actions', 
-        { opacity: 0, y: 12 }, 
-        { opacity: 1, y: 0, duration: 0.6 }, 
-        '-=0.45'
-      )
-      .fromTo('.hero-visual', 
-        { opacity: 0, scale: 0.94 }, 
-        { opacity: 1, scale: 1, duration: 1 }, 
-        '-=0.55'
-      )
-    }, heroRef)
-
-    return () => ctx.revert()
-  }, [])
-
   // Trigger Chatbot Open
   const handleOpenAssistant = () => {
     window.dispatchEvent(new CustomEvent('dronetv:open-chat'))
   }
 
-  // Smooth scroll helper with interest selection
+  // Smooth scroll helper with interest preselection
   const handleEnquireTarget = (interestValue: string) => {
     setForm(prev => ({ ...prev, interest: interestValue }))
     const contactEl = document.getElementById('contact')
@@ -234,63 +212,185 @@ export default function Home() {
     }
   }
 
+  // ── Motion UI Animation Variants ─────────────────────────────────────────
+  const heroContainerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.12,
+        delayChildren: 0.15,
+      },
+    },
+  }
+
+  const lineVariants: Variants = {
+    hidden: { y: shouldReduceMotion ? 0 : '105%', opacity: shouldReduceMotion ? 0 : 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: 'spring',
+        stiffness: 240,
+        damping: 24,
+      },
+    },
+  }
+
+  const fadeUpVariants: Variants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 18 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.65,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  }
+
+  const sectionHeaderVariants: Variants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  }
+
+  const cardGridVariants: Variants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.08,
+      },
+    },
+  }
+
+  const cardItemVariants: Variants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 260,
+        damping: 25,
+      },
+    },
+  }
+
   return (
     <div className="home-wrapper">
-      {/* ── 1. HERO SECTION ── */}
+      {/* ── 1. HERO SECTION (Motion UI Masked Split-Text + Parallax) ── */}
       <section id="home" className="hero" ref={heroRef}>
         <div className="hero-grid-overlay" aria-hidden="true" />
         <div className="container hero-inner">
-          <div className="hero-content">
-            <span className="hero-tag">
+          <motion.div 
+            className="hero-content"
+            style={{ y: heroContentY, opacity: heroOpacity }}
+            variants={heroContainerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {/* Eyebrow Label */}
+            <motion.span className="hero-tag" variants={fadeUpVariants}>
               <span className="hero-tag-dot" />
               Aviation & Survey Intelligence
-            </span>
+            </motion.span>
 
-            <h1 className="hero-title">
-              See the ground
-              <span className="highlight">before you fly.</span>
+            {/* Editorial Masked Split-Text Reveal */}
+            <h1 className="hero-title" aria-label="See the ground before you fly.">
+              <span className="hero-title-line-mask">
+                <motion.span className="hero-title-line" variants={lineVariants}>
+                  See the ground
+                </motion.span>
+              </span>
+              <span className="hero-title-line-mask">
+                <motion.span className="hero-title-line highlight" variants={lineVariants}>
+                  before you fly.
+                </motion.span>
+              </span>
             </h1>
 
-            <p className="hero-desc">
+            {/* Subheadline */}
+            <motion.p className="hero-desc" variants={fadeUpVariants}>
               AI-guided support for DroneTV's training programs and aerial survey services.
-            </p>
+            </motion.p>
 
-            <div className="hero-actions">
-              <button 
+            {/* Single Primary CTA */}
+            <motion.div className="hero-actions" variants={fadeUpVariants}>
+              <motion.button 
                 className="btn-primary hero-assistant-btn" 
                 onClick={handleOpenAssistant}
-                aria-label="Open AI Assistant"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                aria-label="Ask the assistant"
               >
                 <span>Ask the assistant</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14"></path>
                   <path d="M12 5l7 7-7 7"></path>
                 </svg>
-              </button>
-            </div>
-          </div>
+              </motion.button>
+            </motion.div>
+          </motion.div>
 
-          {/* Technical Radar Visual */}
-          <div className="hero-visual" aria-hidden="true">
+          {/* Technical Radar Visual with Subtle Parallax */}
+          <motion.div 
+            className="hero-visual" 
+            aria-hidden="true"
+            style={{ y: radarY, opacity: heroOpacity }}
+            initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              type: 'spring',
+              stiffness: 220,
+              damping: 24,
+              delay: 0.35,
+            }}
+          >
             <Radar />
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── 2. SERVICES SECTION ── */}
+      {/* ── 2. SERVICES SECTION (Motion Staggered Viewport Entrance) ── */}
       <section id="services" className="services-section">
         <div className="container">
-          <div className="section-header">
+          <motion.div 
+            className="section-header"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.35 }}
+            variants={sectionHeaderVariants}
+          >
             <span className="badge badge-accent">Capabilities</span>
             <h2 className="section-title" style={{ marginTop: '0.85rem' }}>Our Core Services</h2>
             <p className="section-subtitle">
               Precision commercial flight operations, LiDAR photogrammetry, and industrial inspection reports.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="services-grid">
+          <motion.div 
+            className="services-grid"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={cardGridVariants}
+          >
             {SERVICES.map(s => (
-              <div key={s.title} className="service-panel">
+              <motion.div 
+                key={s.title} 
+                className="service-panel"
+                variants={cardItemVariants}
+                whileHover={{ y: -4, transition: { duration: 0.22, ease: 'easeOut' } }}
+              >
                 <div className="service-header-row">
                   <div className="service-icon-box">{s.icon}</div>
                   <span className="service-code">{s.code}</span>
@@ -313,26 +413,43 @@ export default function Home() {
                     Enquire About Service →
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── 3. COURSES SECTION ── */}
+      {/* ── 3. COURSES SECTION (Motion Progressive Stagger) ── */}
       <section id="courses" className="courses-section">
         <div className="container">
-          <div className="section-header">
+          <motion.div 
+            className="section-header"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.35 }}
+            variants={sectionHeaderVariants}
+          >
             <span className="badge badge-sage">DGCA Training</span>
             <h2 className="section-title" style={{ marginTop: '0.85rem' }}>Certified Pilot Courses</h2>
             <p className="section-subtitle">
               Structured flight curriculum conducted by certified flight instructors at our Mumbai training facility.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="courses-grid">
+          <motion.div 
+            className="courses-grid"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={cardGridVariants}
+          >
             {COURSES.map(c => (
-              <div key={c.title} className="course-panel">
+              <motion.div 
+                key={c.title} 
+                className="course-panel"
+                variants={cardItemVariants}
+                whileHover={{ y: -4, transition: { duration: 0.22, ease: 'easeOut' } }}
+              >
                 <div className="course-header-row">
                   <span className={`badge ${c.badgeType === 'accent' ? 'course-badge-accent' : 'course-badge-sage'}`}>
                     {c.badge}
@@ -367,26 +484,38 @@ export default function Home() {
                     Enrol in Course →
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── 4. CONTACT & ENQUIRY SECTION ── */}
+      {/* ── 4. CONTACT & ENQUIRY SECTION (Motion Entrance & Form) ── */}
       <section id="contact" className="contact-section">
         <div className="container">
-          <div className="section-header">
+          <motion.div 
+            className="section-header"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.35 }}
+            variants={sectionHeaderVariants}
+          >
             <span className="badge badge-accent">Direct Contact</span>
             <h2 className="section-title" style={{ marginTop: '0.85rem' }}>Initiate an Enquiry</h2>
             <p className="section-subtitle">
               Speak directly with our flight planning team or register for certified pilot training.
             </p>
-          </div>
+          </motion.div>
 
           <div className="contact-layout">
             {/* Technical Coordinates Panel */}
-            <div className="contact-info-panel">
+            <motion.div 
+              className="contact-info-panel"
+              initial={{ opacity: 0, x: shouldReduceMotion ? 0 : -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+            >
               <div className="contact-info-header">
                 <h3>Aviation Operations Desk</h3>
                 <p>
@@ -431,12 +560,23 @@ export default function Home() {
               <div className="contact-detail-badge">
                 <span>✓</span> Responses delivered within 24 business hours
               </div>
-            </div>
+            </motion.div>
 
-            {/* Live Enquiry Form */}
-            <div className="enquiry-form-card">
+            {/* Live Enquiry Form Card */}
+            <motion.div 
+              className="enquiry-form-card"
+              initial={{ opacity: 0, x: shouldReduceMotion ? 0 : 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+            >
               {submitted ? (
-                <div className="enquiry-success-alert">
+                <motion.div 
+                  className="enquiry-success-alert"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                >
                   <div className="enquiry-success-icon">✓</div>
                   <h4>Enquiry Registered Successfully</h4>
                   <p>
@@ -451,7 +591,7 @@ export default function Home() {
                   >
                     Submit Another Enquiry
                   </button>
-                </div>
+                </motion.div>
               ) : (
                 <form onSubmit={handleSubmit} noValidate>
                   <h3 className="enquiry-form-title">Flight & Training Enquiry</h3>
@@ -553,12 +693,19 @@ export default function Home() {
 
                   {apiError && <p className="field-error" style={{ marginBottom: '1rem' }}>{apiError}</p>}
 
-                  <button type="submit" className="btn-primary form-submit-btn" disabled={submitting}>
+                  <motion.button 
+                    type="submit" 
+                    className="btn-primary form-submit-btn" 
+                    disabled={submitting}
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                  >
                     {submitting ? 'Submitting Enquiry...' : 'Submit Mission Enquiry →'}
-                  </button>
+                  </motion.button>
                 </form>
               )}
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
