@@ -115,7 +115,6 @@ export default function Navbar() {
                 onClick={() => scrollToSection(item.id)}
               >
                 {item.label}
-                {isActive && <span className="nav-item-indicator" />}
               </button>
             )
           })}
