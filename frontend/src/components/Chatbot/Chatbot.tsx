@@ -103,7 +103,7 @@ const INITIAL_CHIPS = ['Tell me about your services', 'What courses do you offer
 // ── Component ──────────────────────────────────────────────────────────────
 export default function Chatbot() {
   const [open, setOpen] = useState(false)
-  const [showTeaser, setShowTeaser] = useState(true)
+  const [teaserDismissed, setTeaserDismissed] = useState(false)
   const [messages, setMessages] = useState<Message[]>(() => {
     try {
       const saved = sessionStorage.getItem('dronetv-chat')
@@ -166,14 +166,13 @@ export default function Chatbot() {
 
   const handleOpen = () => {
     setOpen(true)
-    setShowTeaser(false)
     setUnread(0)
   }
 
   return (
     <div className="chatbot-widget" aria-label="DroneTV Chatbot">
       {/* Welcome Callout Pill (Visible when closed) */}
-      {!open && showTeaser && (
+      {!open && !teaserDismissed && (
         <div className="chatbot-teaser" onClick={handleOpen}>
           <div className="chatbot-teaser-content">
             <span className="chatbot-teaser-icon">👋</span>
@@ -186,7 +185,7 @@ export default function Chatbot() {
             className="chatbot-teaser-close" 
             onClick={(e) => {
               e.stopPropagation()
-              setShowTeaser(false)
+              setTeaserDismissed(true)
             }}
             title="Dismiss tooltip"
             aria-label="Dismiss chat tooltip"
