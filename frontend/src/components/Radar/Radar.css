@@ -1,0 +1,178 @@
+/* ===== TECHNICAL RADAR COMPONENT ===== */
+.radar-container {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radar-frame {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(27, 38, 53, 0.7) 0%, rgba(16, 24, 38, 0.95) 75%, #101826 100%);
+  border: 1px solid var(--lines);
+  box-shadow: 
+    0 0 30px rgba(0, 0, 0, 0.7),
+    inset 0 0 40px rgba(16, 24, 38, 0.9);
+  position: relative;
+  overflow: hidden;
+}
+
+/* SVG Instrument Layer */
+.radar-svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+/* Rotating Sweep Beam */
+.radar-sweep-beam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transform-origin: 50% 50%;
+  animation: radarSweep 10s linear infinite;
+  pointer-events: none;
+}
+
+/* Conic gradient for the sweep tail */
+.radar-sweep-beam::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    transparent 300deg,
+    rgba(122, 155, 126, 0.05) 320deg,
+    rgba(242, 166, 60, 0.12) 345deg,
+    rgba(242, 166, 60, 0.35) 360deg
+  );
+}
+
+/* Leading amber edge line */
+.radar-sweep-line {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1.5px;
+  height: 50%;
+  background: linear-gradient(to top, rgba(242, 166, 60, 0.4), #F2A63C);
+  box-shadow: 0 0 8px #F2A63C;
+  transform-origin: bottom center;
+}
+
+@keyframes radarSweep {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Subtle Technical Readout Overlay */
+.radar-readouts {
+  position: absolute;
+  inset: 1.5rem;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.radar-readout-top,
+.radar-readout-bottom {
+  display: flex;
+  justify-content: space-between;
+}
+
+.radar-tag-sage {
+  color: var(--sage);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.radar-tag-sage::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--sage);
+  box-shadow: 0 0 5px var(--sage);
+}
+
+.radar-tag-amber {
+  color: var(--accent);
+}
+
+/* Restrained Target Blips */
+.radar-target {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--sage);
+  box-shadow: 0 0 6px var(--sage);
+  transform: translate(-50%, -50%);
+  animation: targetPulse 3.5s ease-in-out infinite;
+}
+
+.radar-target-2 {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  transform: translate(-50%, -50%);
+  animation: targetPulse 4.5s ease-in-out infinite 1.2s;
+}
+
+@keyframes targetPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  50% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radar-sweep-beam {
+    animation-duration: 30s;
+  }
+  .radar-target, .radar-target-2 {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 768px) {
+  .radar-container {
+    max-width: 320px;
+  }
+}
