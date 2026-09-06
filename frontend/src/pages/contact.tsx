@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 import { submitEnquiry } from '../utils/api'
 import type { UserType } from '../types'
 import './contact.css'
@@ -87,23 +88,35 @@ export default function Contact() {
     }
   }
 
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <>
       {/* ── PAGE HERO ── */}
-      <section className="page-hero">
+      <motion.section 
+        className="page-hero"
+        initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      >
         <div className="container">
           <span className="badge badge-accent">Get In Touch</span>
           <h1>Contact & Enquiry</h1>
           <p>Fill in the form and our team will get back to you within 24 hours.</p>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── CONTACT LAYOUT ── */}
       <section className="contact-page">
         <div className="container">
           <div className="contact-layout">
             {/* Left Info Panel */}
-            <div className="contact-info">
+            <motion.div 
+              className="contact-info"
+              initial={{ opacity: 0, x: shouldReduceMotion ? 0 : -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+            >
               <h2>Let's talk about your project</h2>
               <p>
                 Whether you need aerial footage for a production, drone data for your farm,
@@ -139,10 +152,15 @@ export default function Contact() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Right Form Panel */}
-            <div className="contact-form-wrap">
+            <motion.div 
+              className="contact-form-wrap"
+              initial={{ opacity: 0, x: shouldReduceMotion ? 0 : 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+            >
               {submitted ? (
                 <div className="form-success">
                   <div className="success-icon">✅</div>
@@ -218,7 +236,7 @@ export default function Contact() {
                   </form>
                 </>
               )}
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
