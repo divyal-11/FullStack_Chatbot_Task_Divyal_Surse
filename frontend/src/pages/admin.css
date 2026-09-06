@@ -154,10 +154,14 @@
   color: var(--text-secondary);
   border: 1px solid var(--border);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+.filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
 .filter-btn.active { background: var(--accent-muted); color: var(--accent); border-color: var(--border-accent); }
 
 /* ── TABLE ── */
@@ -251,14 +255,14 @@
   font-family: var(--font-heading);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .action-btn-view { background: var(--bg-elevated); color: var(--text-secondary); border: 1px solid var(--border); }
-.action-btn-view:hover { color: var(--accent); border-color: var(--border-accent); }
+.action-btn-view:hover { color: var(--accent); border-color: var(--border-accent); transform: translateY(-1px); }
 
 .action-btn-delete { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.3); margin-left: 0.5rem; }
-.action-btn-delete:hover { background: rgba(248,113,113,0.2); }
+.action-btn-delete:hover { background: rgba(248,113,113,0.25); border-color: #f87171; transform: translateY(-1px); }
 
 /* Empty state */
 .admin-empty {

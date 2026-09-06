@@ -47,15 +47,18 @@
 }
 
 .footer-col a {
-  display: block;
+  display: inline-block;
   font-size: 0.9rem;
   color: var(--text-secondary);
   text-decoration: none;
   margin-bottom: 0.6rem;
-  transition: color 0.2s ease;
+  transition: color 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.footer-col a:hover { color: var(--accent); }
+.footer-col a:hover {
+  color: var(--accent);
+  transform: translateX(3px);
+}
 
 .footer-bottom {
   border-top: 1px solid var(--border);

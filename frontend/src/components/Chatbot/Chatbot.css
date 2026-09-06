@@ -48,6 +48,11 @@
   line-height: 1;
   display: flex;
   align-items: center;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chatbot-launcher-btn:hover .chatbot-launcher-icon {
+  transform: scale(1.18);
 }
 
 .chatbot-launcher-pulse {
@@ -293,15 +298,16 @@
   font-weight: 500;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
 }
 
 .quick-reply-chip:hover {
   border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-muted);
-  transform: translateY(-1px);
+  color: #ffffff;
+  background: rgba(242, 166, 60, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* ── IN-CHAT LEAD CAPTURE FORM ── */
@@ -405,19 +411,21 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: transform 0.15s ease, background 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease, box-shadow 0.25s ease;
   cursor: pointer;
 }
 
 .chatbot-send:hover {
-  transform: scale(1.05);
+  transform: scale(1.08);
   background: var(--accent-hover);
+  box-shadow: 0 0 12px rgba(242, 166, 60, 0.4);
 }
 
 .chatbot-send:disabled {
   opacity: 0.4;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 @media (max-width: 480px) {
