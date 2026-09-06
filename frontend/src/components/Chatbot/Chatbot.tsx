@@ -3,79 +3,76 @@ import { submitEnquiry } from '../../utils/api'
 import type { UserType } from '../../types'
 import './Chatbot.css'
 
-// ── Rule-based response engine ─────────────────────────────────────────────
-const RESPONSES: { keywords: string[]; reply: string; chips?: string[] }[] = [
+// ── Rule-Based Response Engine ─────────────────────────────────────────────
+const RESPONSES: { keywords: string[]; reply: string; chips?: string[]; showForm?: boolean }[] = [
   {
-    keywords: ['hello', 'hi', 'hey', 'greetings', 'good morning', 'good evening'],
-    reply: 'Hello! 👋 Welcome to DroneTV. I\'m your AI assistant. How can I help you today?',
-    chips: ['Tell me about your services', 'What courses do you offer?', 'I want to get a quote'],
+    keywords: ['hello', 'hi', 'hey', 'greetings', 'morning', 'evening'],
+    reply: "Hello! Welcome to DroneTV. I'm your AI flight and training assistant. How can I assist you today?",
+    chips: ['Tell me about services', 'What courses do you offer?', 'I am interested in a service', 'Speak to someone'],
   },
   {
-    keywords: ['services', 'what do you do', 'offer', 'provide'],
-    reply: '🚁 DroneTV offers:\n• Aerial Cinematography (4K/6K)\n• Industrial Inspection\n• Precision Agriculture & NDVI Mapping\n• 3D Mapping & LiDAR Surveys\n• Construction Monitoring\n• Security & Surveillance\n\nWould you like details on any specific service?',
-    chips: ['Aerial Cinematography', 'Industrial Inspection', 'Precision Agriculture', 'Get a quote'],
+    keywords: ['services', 'what do you do', 'offer', 'solutions', 'capability'],
+    reply: "🚁 DroneTV delivers precision aerial solutions across India:\n• Aerial Survey & 3D LiDAR Mapping\n• DGCA Certified Pilot Training\n• Thermal & Industrial Inspection\n• Precision Agriculture & NDVI\n\nWhich service would you like to explore?",
+    chips: ['Aerial Survey', 'Thermal Inspection', 'DGCA Training', 'Speak to someone'],
   },
   {
-    keywords: ['course', 'training', 'pilot', 'learn', 'dgca', 'certification', 'certificate'],
-    reply: '🎓 Our training programmes:\n• DGCA Certified Remote Pilot (30 days)\n• Night Operations & BVLOS (5 days)\n• Drone Assembly & Maintenance (7 days)\n• Aerial Photography & Videography (10 days)\n• GIS & Mapping with Drones (14 days)\n\nAll courses are conducted at our Mumbai facility.',
-    chips: ['DGCA course details', 'Course fees', 'How to enrol?'],
+    keywords: ['course', 'training', 'pilot', 'learn', 'dgca', 'certification', 'license', 'rpc'],
+    reply: "🎓 DroneTV Training Programmes:\n• DGCA Remote Pilot Course (30 days — ₹45,000)\n• Night Operations & BVLOS (5 days — ₹18,000)\n• Drone Assembly & Maintenance (7 days — ₹12,000)\n\nAll courses are conducted with practical airfield flying at our Mumbai facility.",
+    chips: ['Register as student', 'Course fees', 'Eligibility details', 'Register now'],
   },
   {
-    keywords: ['dgca', 'certified', 'remote pilot', 'rpc'],
-    reply: '✅ Our DGCA Remote Pilot Course is 30 days, fee ₹45,000. It covers air law, navigation, meteorology, simulator + field flying, and exam preparation. Eligibility: 10th Pass, Age 18+.',
-    chips: ['How to enrol?', 'What other courses exist?', 'Contact team'],
+    keywords: ['student', 'eligibility', 'admission', 'qualify', 'age'],
+    reply: "👨‍🎓 Student & Pilot Admissions:\n• Eligibility: Minimum 10th Pass, Age 18+\n• Includes theory ground school, simulator flights, field flying, and DGCA exam preparation.\n\nWould you like to register or speak with an admissions counsellor?",
+    chips: ['Register as student', 'Course fees', 'Speak to someone'],
   },
   {
-    keywords: ['fee', 'cost', 'price', 'how much', 'charges', 'rate'],
-    reply: '💰 Course Fees:\n• DGCA Pilot Course — ₹45,000\n• Night Ops & BVLOS — ₹18,000\n• Drone Assembly — ₹12,000\n• Aerial Photography — ₹20,000\n• GIS & Mapping — ₹28,000\n\nFor service pricing, it depends on project scope. Submit an enquiry for a custom quote!',
-    chips: ['Get a custom quote', 'Submit enquiry'],
-  },
-  {
-    keywords: ['aerial', 'cinema', 'film', 'video', 'photography', 'footage'],
-    reply: '🎬 Our Aerial Cinematography service delivers stunning 4K/6K RAW footage with gimbal-stabilised cameras. We cover films, commercials, real-estate, events and live streaming. Same-day rushes available.',
-    chips: ['Get a quote', 'Submit enquiry', 'Other services'],
-  },
-  {
-    keywords: ['inspection', 'industrial', 'tower', 'pipeline', 'bridge', 'wind turbine'],
-    reply: '🔍 Industrial Inspection — We use thermal imaging and zoom cameras to safely inspect towers, wind turbines, pipelines, and bridges. You get detailed georeferenced PDF reports without risky rope-access.',
-    chips: ['Get a quote', 'Other services'],
-  },
-  {
-    keywords: ['agriculture', 'farm', 'ndvi', 'crop', 'spraying', 'irrigation'],
-    reply: '🌾 Precision Agriculture — NDVI multispectral mapping identifies crop stress, water issues, and pest zones early. We also support variable-rate spraying and yield prediction.',
-    chips: ['Get a quote', 'Other services'],
-  },
-  {
-    keywords: ['mapping', 'survey', 'lidar', 'photogrammetry', '3d', 'dem', 'gis'],
-    reply: '🗺️ 3D Mapping & Survey — We produce centimetre-accurate orthomosaics, DEMs, and point clouds using photogrammetry and LiDAR. Outputs include CAD, GIS, and Pix4D formats.',
-    chips: ['Get a quote', 'Other services'],
-  },
-  {
-    keywords: ['location', 'where', 'based', 'mumbai', 'address', 'office'],
-    reply: '📍 DroneTV is based in **Mumbai, Maharashtra, India**. We operate across the country for large projects. Contact us for site-specific assessments.',
-    chips: ['Contact team', 'Submit enquiry'],
-  },
-  {
-    keywords: ['contact', 'reach', 'email', 'phone', 'call', 'speak', 'talk'],
-    reply: '📞 You can reach us at:\n• Email: hello@dronetv.in\n• Phone: +91 98765 43210\n• Hours: Mon–Sat, 9 AM – 6 PM IST\n\nOr submit an enquiry form and we\'ll get back within 24 hours!',
-    chips: ['Submit enquiry', 'Get a quote'],
-  },
-  {
-    keywords: ['quote', 'enquiry', 'enrol', 'book', 'hire', 'enquire', 'submit'],
-    reply: 'Great! I can capture your details right here. Just fill in the quick form below and our team will get back to you within 24 hours! 👇',
+    keywords: ['register', 'enrol', 'enroll', 'admission', 'apply', 'join'],
+    reply: "You can register for any DGCA pilot course or technical training right here! Please provide your details below and our training coordinator will confirm your batch schedule. 👇",
+    showForm: true,
     chips: [],
+  },
+  {
+    keywords: ['interested in a service', 'interested', 'survey service', 'inspection service', 'quote', 'hire'],
+    reply: "Excellent! We provide full-scope aerial survey, LiDAR mapping, and thermal inspections. Fill out the quick mission enquiry card below to receive a custom project estimate! 👇",
+    showForm: true,
+    chips: [],
+  },
+  {
+    keywords: ['speak to someone', 'call', 'human', 'agent', 'phone', 'representative', 'talk'],
+    reply: "📞 You can speak directly with our flight operations desk at +91 98765 43210 (Mon–Sat, 9:00 AM – 6:00 PM IST) or submit your details below for a direct callback! 👇",
+    showForm: true,
+    chips: [],
+  },
+  {
+    keywords: ['contact', 'reach', 'email', 'address', 'location', 'office', 'mumbai'],
+    reply: "📍 DroneTV Operations Desk:\n• Location: Mumbai, Maharashtra, India\n• Email: hello@dronetv.in\n• Phone: +91 98765 43210\n• Hours: Mon–Sat, 9:00 AM – 6:00 PM IST\n\nYou can also submit an enquiry form right here.",
+    chips: ['Speak to someone', 'Register as student', 'Explore services'],
+  },
+  {
+    keywords: ['fee', 'cost', 'price', 'rate', 'how much', 'pricing'],
+    reply: "💰 Certified Programme Fees:\n• DGCA Remote Pilot: ₹45,000 (30 Days)\n• Night Ops & BVLOS: ₹18,000 (5 Days)\n• Drone Assembly: ₹12,000 (7 Days)\n\nFor commercial aerial survey projects, quotes are scoped by area and deliverables.",
+    chips: ['Register now', 'Interested in a service', 'Speak to someone'],
+  },
+  {
+    keywords: ['thermal', 'inspection', 'pipeline', 'solar', 'tower'],
+    reply: "🔍 Thermal & Industrial Inspection:\nWe use radiometric infrared sensors to safely audit high-voltage transmission towers, wind turbines, and industrial assets without risky scaffolding. Reports include georeferenced thermal orthomosaics.",
+    chips: ['Interested in a service', 'Speak to someone'],
+  },
+  {
+    keywords: ['survey', 'mapping', 'lidar', 'photogrammetry', '3d', 'dem'],
+    reply: "🗺️ Aerial Survey & 3D Mapping:\nCentimetre-accurate orthomosaics, digital elevation models, and point clouds using aerial LiDAR and photogrammetry. Deliverables include CAD, GIS, and Pix4D formats.",
+    chips: ['Interested in a service', 'Speak to someone'],
   },
 ]
 
-const FALLBACK_REPLY = "I'm not sure about that, but our team definitely can help! Would you like to submit an enquiry or speak to someone directly?"
-const FALLBACK_CHIPS = ['Tell me about services', 'Course information', 'Contact team', 'Submit enquiry']
+const FALLBACK_REPLY = "I want to make sure you get the exact information you need. Our aviation coordinators can assist you directly with custom surveys or course admissions. Would you like to speak to someone or submit a quick enquiry?"
+const FALLBACK_CHIPS = ['Tell me about services', 'What courses do you offer?', 'Interested in a service', 'Speak to someone']
 
 function getResponse(input: string): { reply: string; chips: string[]; showForm?: boolean } {
-  const lower = input.toLowerCase()
+  const lower = input.toLowerCase().trim()
   for (const r of RESPONSES) {
     if (r.keywords.some(k => lower.includes(k))) {
-      const showForm = ['quote', 'enquiry', 'enrol', 'book', 'hire', 'enquire', 'submit'].some(k => lower.includes(k))
-      return { reply: r.reply, chips: r.chips || FALLBACK_CHIPS, showForm }
+      return { reply: r.reply, chips: r.chips || FALLBACK_CHIPS, showForm: r.showForm }
     }
   }
   return { reply: FALLBACK_REPLY, chips: FALLBACK_CHIPS }
@@ -94,53 +91,55 @@ const INITIAL_MESSAGES: Message[] = [
   {
     id: '0',
     role: 'bot',
-    text: 'Hi there! 👋 I\'m DroneTV\'s AI assistant. I can help you with drone services, DGCA pilot training, pricing, or instant enquiry booking. How can I help today?',
+    text: "Welcome to DroneTV. I'm your technical flight & training assistant. How can I help with services, DGCA courses, or project planning today?",
   },
 ]
 
-const INITIAL_CHIPS = ['Tell me about your services', 'What courses do you offer?', 'I want to get a quote', 'Contact the team']
+const INITIAL_CHIPS = [
+  'Tell me about services',
+  'What courses do you offer?',
+  'Interested in a service',
+  'Speak to someone',
+]
 
 // ── Component ──────────────────────────────────────────────────────────────
 export default function Chatbot() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>(() => {
     try {
-      const saved = sessionStorage.getItem('dronetv-chat')
+      const saved = sessionStorage.getItem('dronetv-chat-history')
       return saved ? JSON.parse(saved) : INITIAL_MESSAGES
-    } catch { return INITIAL_MESSAGES }
+    } catch {
+      return INITIAL_MESSAGES
+    }
   })
   const [chips, setChips] = useState<string[]>(INITIAL_CHIPS)
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
-  const [unread, setUnread] = useState(0)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  // Listen for global open-chatbot trigger from Hero CTA
+  // Listen for custom trigger from Hero CTA
   useEffect(() => {
-    const handleOpenFromEvent = () => {
-      setOpen(true)
-      setUnread(0)
-    }
-    window.addEventListener('open-chatbot', handleOpenFromEvent)
-    return () => window.removeEventListener('open-chatbot', handleOpenFromEvent)
+    const handleCustomOpen = () => setOpen(true)
+    window.addEventListener('dronetv:open-chat', handleCustomOpen)
+    return () => window.removeEventListener('dronetv:open-chat', handleCustomOpen)
   }, [])
 
-  // Persist history
+  // Persist session history
   useEffect(() => {
-    sessionStorage.setItem('dronetv-chat', JSON.stringify(messages))
+    try {
+      sessionStorage.setItem('dronetv-chat-history', JSON.stringify(messages))
+    } catch {
+      // Ignore sessionStorage quotas
+    }
   }, [messages])
 
-  // Scroll to bottom
+  // Scroll to latest message
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, typing])
-
-  // Unread badge
-  useEffect(() => {
-    if (!open && messages.length > 1) {
-      setUnread(prev => prev + 1)
+    if (open) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [messages.length]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [messages, typing, open])
 
   const addUserMessage = (text: string) => {
     const userMsg: Message = { id: Date.now().toString(), role: 'user', text }
@@ -154,7 +153,7 @@ export default function Chatbot() {
       const botMsg: Message = { id: (Date.now() + 1).toString(), role: 'bot', text, showForm }
       setMessages(prev => [...prev, botMsg])
       setTyping(false)
-    }, 600)
+    }, 600 + Math.random() * 400)
   }
 
   const handleSend = (text?: string) => {
@@ -170,30 +169,29 @@ export default function Chatbot() {
   const handleClear = () => {
     setMessages(INITIAL_MESSAGES)
     setChips(INITIAL_CHIPS)
-    sessionStorage.removeItem('dronetv-chat')
-  }
-
-  const handleOpen = () => {
-    setOpen(true)
-    setUnread(0)
+    sessionStorage.removeItem('dronetv-chat-history')
   }
 
   return (
-    <div className="chatbot-widget" aria-label="DroneTV Chatbot">
+    <div className="chatbot-widget" aria-label="DroneTV AI Support Assistant">
       {/* Chat Window */}
       {open && (
         <div className="chatbot-window">
           {/* Header */}
           <div className="chatbot-header">
+            <div className="chatbot-avatar-wrap">◈</div>
             <div className="chatbot-header-info">
-              <strong>DroneTV Assistant</strong>
-              <span>Online • Ready to help</span>
+              <strong>DroneTV AI Assistant</strong>
+              <div className="chatbot-status-row">
+                <span className="chatbot-status-indicator" />
+                <span>Active Telemetry • Ready</span>
+              </div>
             </div>
             <div className="chatbot-header-actions">
-              <button className="chatbot-action-btn" onClick={handleClear} title="Clear conversation" aria-label="Clear chat">
-                🗑
+              <button className="chatbot-action-btn" onClick={handleClear} title="Clear conversation" aria-label="Reset chat">
+                ↺
               </button>
-              <button className="chatbot-action-btn" onClick={() => setOpen(false)} title="Close chat" aria-label="Close chat">
+              <button className="chatbot-action-btn" onClick={() => setOpen(false)} title="Close" aria-label="Close chat">
                 ✕
               </button>
             </div>
@@ -205,21 +203,30 @@ export default function Chatbot() {
               <div key={msg.id} className={`msg ${msg.role}`}>
                 <div className="msg-bubble">
                   {msg.text?.split('\n').map((line, i) => (
-                    <span key={i}>{line}{i < (msg.text?.split('\n').length ?? 1) - 1 ? <br /> : null}</span>
+                    <span key={i}>
+                      {line}
+                      {i < (msg.text?.split('\n').length ?? 1) - 1 ? <br /> : null}
+                    </span>
                   ))}
+
+                  {/* Embedded Lead Capture Form */}
                   {msg.showForm && !msg.formSubmitted && (
-                    <LeadCaptureForm onSubmit={(name) => {
+                    <InChatLeadForm onSubmit={(name) => {
                       setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, formSubmitted: true } : m))
-                      addBotResponse(`Thank you ${name}! Your enquiry has been received. Our team will reach out within 24 hours.`)
+                      addBotResponse(`Thank you, ${name}! Your details have been submitted. Our aviation coordinator will contact you directly within 24 hours.`)
                       setChips(INITIAL_CHIPS)
                     }} />
                   )}
+
                   {msg.showForm && msg.formSubmitted && (
-                    <p className="chat-form-success">✓ Enquiry submitted successfully!</p>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--sage)', marginTop: '0.5rem', fontWeight: 600 }}>
+                      ✓ Details submitted successfully
+                    </p>
                   )}
                 </div>
               </div>
             ))}
+
             {typing && (
               <div className="msg bot">
                 <div className="typing-indicator">
@@ -232,7 +239,7 @@ export default function Chatbot() {
             <div ref={bottomRef} />
           </div>
 
-          {/* Quick Reply Chips */}
+          {/* Quick-Reply Chips */}
           {chips.length > 0 && !typing && (
             <div className="quick-replies">
               {chips.map(chip => (
@@ -243,44 +250,48 @@ export default function Chatbot() {
             </div>
           )}
 
-          {/* Input */}
+          {/* Input Area */}
           <div className="chatbot-input-area">
             <input
               className="chatbot-input"
               type="text"
-              placeholder="Ask a question..."
+              placeholder="Ask about services, DGCA courses, pricing..."
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSend()}
-              id="chatbot-text-input"
               autoComplete="off"
             />
-            <button className="chatbot-send" onClick={() => handleSend()} disabled={!input.trim()} aria-label="Send message">
-              ➤
+            <button
+              className="chatbot-send"
+              onClick={() => handleSend()}
+              disabled={!input.trim()}
+              aria-label="Send query"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
             </button>
           </div>
         </div>
       )}
 
-      {/* Floating Button Labeled Exactly: "Ask DroneTV AI" */}
-      <button 
-        className={`chatbot-toggle ${open ? 'is-open' : ''}`} 
-        onClick={open ? () => setOpen(false) : handleOpen} 
-        aria-label={open ? 'Close Chatbot' : 'Ask DroneTV AI'}
+      {/* ONE Clear Floating Chat Entry Point: "Ask DroneTV AI" */}
+      <button
+        className={`chatbot-launcher-btn ${open ? 'is-open' : ''}`}
+        onClick={() => setOpen(!open)}
+        aria-label={open ? 'Close Assistant' : 'Ask DroneTV AI'}
       >
-        {open ? (
-          <span>✕ Close</span>
-        ) : (
-          <span>💬 Ask DroneTV AI</span>
-        )}
-        {!open && unread > 0 && <span className="chatbot-badge">{unread > 9 ? '9+' : unread}</span>}
+        <span className="chatbot-launcher-icon">◈</span>
+        <span>{open ? 'Close Assistant' : 'Ask DroneTV AI'}</span>
+        {!open && <span className="chatbot-launcher-pulse" />}
       </button>
     </div>
   )
 }
 
-// ── In-Chat Lead Capture Form ──────────────────────────────────────────────
-function LeadCaptureForm({ onSubmit }: { onSubmit: (name: string) => void }) {
+// ── In-Chat Lead Form Component ─────────────────────────────────────────────
+function InChatLeadForm({ onSubmit }: { onSubmit: (name: string) => void }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', userType: '' as UserType | '', interest: '' })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -288,7 +299,7 @@ function LeadCaptureForm({ onSubmit }: { onSubmit: (name: string) => void }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.name || !form.email || !form.userType) {
-      setError('Please fill in name, email, and type.')
+      setError('Please provide name, email, and profile type.')
       return
     }
     setSubmitting(true)
@@ -299,12 +310,12 @@ function LeadCaptureForm({ onSubmit }: { onSubmit: (name: string) => void }) {
         email: form.email,
         phone: form.phone || 'N/A',
         userType: form.userType as UserType,
-        interest: form.interest || 'General Enquiry',
-        message: `Enquiry submitted via chatbot by ${form.name}`,
+        interest: form.interest || 'General Technical Enquiry',
+        message: `Chatbot enquiry logged by ${form.name}`,
       })
       onSubmit(form.name)
     } catch {
-      setError('Submission failed. Please try the Contact page.')
+      setError('Submission could not reach backend. Please try again.')
     } finally {
       setSubmitting(false)
     }
@@ -312,20 +323,49 @@ function LeadCaptureForm({ onSubmit }: { onSubmit: (name: string) => void }) {
 
   return (
     <form className="chat-lead-form" onSubmit={handleSubmit}>
-      <p className="chat-lead-form-title">Quick Enquiry Form</p>
-      <input className="chat-lead-input" placeholder="Your name *" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required />
-      <input className="chat-lead-input" placeholder="Email *" type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} required />
-      <input className="chat-lead-input" placeholder="Phone (optional)" type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} />
-      <select className="chat-lead-select" value={form.userType} onChange={e => setForm(p => ({ ...p, userType: e.target.value as UserType }))}>
-        <option value="">I am a... *</option>
-        <option value="STUDENT">Student</option>
-        <option value="CUSTOMER">Customer / Business</option>
-        <option value="OTHER">Other</option>
+      <p className="chat-lead-title">📋 Direct Enquiry Routing</p>
+      <input
+        className="chat-lead-input"
+        placeholder="Full name *"
+        value={form.name}
+        onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
+        required
+      />
+      <input
+        className="chat-lead-input"
+        placeholder="Email address *"
+        type="email"
+        value={form.email}
+        onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+        required
+      />
+      <input
+        className="chat-lead-input"
+        placeholder="Phone number (optional)"
+        type="tel"
+        value={form.phone}
+        onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
+      />
+      <select
+        className="chat-lead-select"
+        value={form.userType}
+        onChange={e => setForm(p => ({ ...p, userType: e.target.value as UserType }))}
+        required
+      >
+        <option value="">Profile type... *</option>
+        <option value="STUDENT">Student / Pilot Candidate</option>
+        <option value="CUSTOMER">Business / Commercial Client</option>
+        <option value="OTHER">Other Technical Query</option>
       </select>
-      <input className="chat-lead-input" placeholder="Interest (optional)" value={form.interest} onChange={e => setForm(p => ({ ...p, interest: e.target.value }))} />
+      <input
+        className="chat-lead-input"
+        placeholder="Area of interest (optional)"
+        value={form.interest}
+        onChange={e => setForm(p => ({ ...p, interest: e.target.value }))}
+      />
       {error && <p style={{ fontSize: '0.75rem', color: '#f87171' }}>{error}</p>}
       <button type="submit" className="chat-lead-submit" disabled={submitting}>
-        {submitting ? 'Submitting...' : 'Submit Enquiry →'}
+        {submitting ? 'Submitting...' : 'Submit to Coordinator →'}
       </button>
     </form>
   )
