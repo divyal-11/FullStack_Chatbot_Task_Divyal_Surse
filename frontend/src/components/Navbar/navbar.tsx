@@ -40,7 +40,7 @@ export default function Navbar() {
 
       if (isAutoScrolling.current || location.pathname !== '/') return
 
-      const navOffset = 90
+      const navOffset = 64
       const sections = NAV_ITEMS.map(item => document.getElementById(item.id)).filter(Boolean) as HTMLElement[]
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -75,7 +75,7 @@ export default function Navbar() {
     const element = document.getElementById(sectionId)
     if (!element) return
 
-    const navOffset = 72
+    const navOffset = 64
     const targetY = element.getBoundingClientRect().top + window.pageYOffset - navOffset
 
     // Cancel any ongoing tweens
