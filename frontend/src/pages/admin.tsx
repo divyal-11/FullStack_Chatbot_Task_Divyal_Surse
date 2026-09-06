@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { motion, useReducedMotion, type Variants } from 'motion/react'
 import { getEnquiries, getStats, updateEnquiryStatus, deleteEnquiry } from '../utils/api'
 import type { Enquiry, EnquiryStats } from '../types'
 import './admin.css'
@@ -98,11 +99,37 @@ export default function Admin() {
     }
   }
 
+  const shouldReduceMotion = useReducedMotion()
+
+  const staggerContainer: Variants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.04,
+      },
+    },
+  }
+
+  const staggerItem: Variants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 12 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+    },
+  }
+
   // ── LOGIN GATE ──
   if (!authed) {
     return (
       <div className="admin-login">
-        <div className="admin-login-card">
+        <motion.div 
+          className="admin-login-card"
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 16, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+        >
           <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🔐</div>
           <h1>Admin Access</h1>
           <p>Enter your admin token to access the dashboard.</p>
@@ -119,7 +146,7 @@ export default function Admin() {
               Unlock Dashboard
             </button>
           </form>
-        </div>
+        </motion.div>
       </div>
     )
   }
@@ -127,9 +154,14 @@ export default function Admin() {
   // ── DASHBOARD ──
   return (
     <div className="admin-page">
-      <div className="container">
+      <motion.div 
+        className="container"
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+      >
         {/* Header */}
-        <div className="admin-header">
+        <motion.div className="admin-header" variants={staggerItem}>
           <div>
             <h1>Enquiry Dashboard</h1>
             <p>Manage and track all incoming leads</p>
@@ -142,11 +174,11 @@ export default function Admin() {
               Logout
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* KPI Cards */}
         {stats && (
-          <div className="kpi-grid">
+          <motion.div className="kpi-grid" variants={staggerItem}>
             <div className="kpi-card">
               <div className="kpi-label">Total Leads</div>
               <div className="kpi-value">{stats.total}</div>
@@ -167,11 +199,11 @@ export default function Admin() {
               <div className="kpi-label">Closed</div>
               <div className="kpi-value">{stats.closed}</div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Toolbar */}
-        <div className="admin-toolbar">
+        <motion.div className="admin-toolbar" variants={staggerItem}>
           <input
             className="search-input"
             type="search"
@@ -194,13 +226,13 @@ export default function Admin() {
               </button>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Error */}
         {error && <p style={{ color: '#f87171', marginBottom: '1rem' }}>{error}</p>}
 
         {/* Table */}
-        <div className="admin-table-wrap">
+        <motion.div className="admin-table-wrap" variants={staggerItem}>
           {loading ? (
             <div className="admin-loading">Loading enquiries...</div>
           ) : enquiries.length === 0 ? (
@@ -250,8 +282,8 @@ export default function Admin() {
               </tbody>
             </table>
           )}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Detail Modal */}
       {selectedEnquiry && (
