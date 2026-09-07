@@ -24,24 +24,24 @@ This project strictly fulfills all requirements of the **IPAGE Group Full Stack 
 
 ### 1. Landing Page & Aviation Telemetry Hero
 *Dark aviation instrument panel theme with interactive radar sweep and operational telemetry metrics:*
-![DroneTV Landing Page](docs/screenshots/hero_section.png)
+![DroneTV Landing Page](docs/screenshots/hero.png)
 
 ### 2. Commercial Aerial Services & DGCA Courses
 *Full catalog of enterprise drone surveying solutions and DGCA-certified pilot courses:*
-![DroneTV Services](docs/screenshots/services_section.png)
-![DroneTV Courses](docs/screenshots/courses_section.png)
+![DroneTV Services](docs/screenshots/services.png)
+![DroneTV Courses](docs/screenshots/courses.png)
 
 ### 3. AI Chatbot with Embedded Lead Routing Form
 *Rule-based AI assistant with quick-reply chips, conversation reset, and in-chat lead enquiry form:*
-![Chatbot Lead Form](docs/screenshots/chatbot_lead_form.png)
+![Chatbot Lead Form](docs/screenshots/chatbot.png)
 
 ### 4. Admin Management Dashboard (`/admin`)
 *Real-time KPI overview cards, search bar, Student/Customer filter tabs, and full enquiries table:*
-![Admin Dashboard](docs/screenshots/admin_dashboard.png)
+![Admin Dashboard](docs/screenshots/admin.png)
 
 ### 5. Enquiry Inspection Modal & Lifecycle Management
 *Modal displaying complete lead details, timestamp metadata, and live status updater:*
-![Admin Details Modal](docs/screenshots/admin_details_modal.png)
+![Admin Details Modal](docs/screenshots/modal.png)
 
 ---
 
