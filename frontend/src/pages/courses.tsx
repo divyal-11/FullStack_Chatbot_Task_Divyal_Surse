@@ -141,9 +141,8 @@ export default function Courses() {
           <motion.div 
             className="courses-page-grid"
             variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            initial="visible"
+            animate="visible"
           >
             {COURSES.map(c => (
               <motion.div 

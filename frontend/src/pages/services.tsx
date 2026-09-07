@@ -91,9 +91,8 @@ export default function Services() {
           <motion.div 
             className="services-list"
             variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            initial="visible"
+            animate="visible"
           >
             {SERVICES.map(s => (
               <motion.div 
