@@ -28,8 +28,8 @@ This project strictly fulfills all requirements of the **IPAGE Group Full Stack 
 
 ### 2. Commercial Aerial Services & DGCA Courses
 *Full catalog of enterprise drone surveying solutions and DGCA-certified pilot courses:*
-![DroneTV Services](docs/screenshots/services.png)
-![DroneTV Courses](docs/screenshots/courses.png)
+![DroneTV Services](docs/screenshots/core_services.png)
+![DroneTV Courses](docs/screenshots/pilot_courses.png)
 
 ### 3. AI Chatbot with Embedded Lead Routing Form
 *Rule-based AI assistant with quick-reply chips, conversation reset, and in-chat lead enquiry form:*
