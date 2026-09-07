@@ -1,14 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { env } from "../config/env";
 
-/**
- * Admin authentication middleware:
- * - Authorization: Bearer <correct-token> -> allowed
- * - x-admin-token: <correct-token> -> allowed
- * - Missing token -> 401 Unauthorized
- * - Wrong token -> 401 Unauthorized
- * Response does NOT expose internal details.
- */
 export const requireAdminAuth = (
   req: Request,
   res: Response,
@@ -25,7 +17,7 @@ export const requireAdminAuth = (
     providedToken = tokenHeader.trim();
   }
 
-  if (!providedToken || providedToken !== env.ADMIN_TOKEN) {
+  if (providedToken !== env.ADMIN_TOKEN) {
     res.status(401).json({
       error: "Unauthorized",
     });
