@@ -76,7 +76,7 @@ Retrieves an array of enquiries. Supports filtering by keyword search, user type
 #### cURL Example
 ```bash
 curl -X GET "https://fullstack-chatbot-task-divyal-surse.onrender.com/api/enquiries?userType=STUDENT&status=NEW" \
-  -H "x-admin-token: dronetv_admin_secret_2026"
+  -H "x-admin-token: <ADMIN_TOKEN>"
 ```
 
 #### Success Response (`200 OK`)
@@ -111,7 +111,7 @@ Retrieves the full record of an enquiry by its primary identifier.
 #### cURL Example
 ```bash
 curl -X GET "https://fullstack-chatbot-task-divyal-surse.onrender.com/api/enquiries/cmtrjs45g0000ew20m3kp41x8" \
-  -H "x-admin-token: dronetv_admin_secret_2026"
+  -H "x-admin-token: <ADMIN_TOKEN>"
 ```
 
 #### Success Response (`200 OK`)
@@ -224,7 +224,7 @@ Updates status or other fields of an existing enquiry.
 ```bash
 curl -X PUT "https://fullstack-chatbot-task-divyal-surse.onrender.com/api/enquiries/cmtrjs45g0000ew20m3kp41x8" \
   -H "Content-Type: application/json" \
-  -H "x-admin-token: dronetv_admin_secret_2026" \
+  -H "x-admin-token: <ADMIN_TOKEN>" \
   -d '{"status": "IN_PROGRESS"}'
 ```
 
@@ -258,7 +258,7 @@ Permanently deletes an enquiry record from the database.
 #### cURL Example
 ```bash
 curl -X DELETE "https://fullstack-chatbot-task-divyal-surse.onrender.com/api/enquiries/cmtrjs45g0000ew20m3kp41x8" \
-  -H "x-admin-token: dronetv_admin_secret_2026"
+  -H "x-admin-token: <ADMIN_TOKEN>"
 ```
 
 #### Success Response (`204 No Content`)
@@ -275,7 +275,7 @@ Returns counts of enquiries aggregated across each status lifecycle stage.
 #### cURL Example
 ```bash
 curl -X GET "https://fullstack-chatbot-task-divyal-surse.onrender.com/api/enquiries/stats" \
-  -H "x-admin-token: dronetv_admin_secret_2026"
+  -H "x-admin-token: <ADMIN_TOKEN>"
 ```
 
 #### Success Response (`200 OK`)

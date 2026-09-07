@@ -31,7 +31,7 @@ export default function Admin() {
   const [authed, setAuthed] = useState(() => {
     try {
       const urlToken = new URLSearchParams(window.location.search).get('token')
-      return urlToken === ADMIN_TOKEN || (ADMIN_TOKEN && urlToken === 'dronetv_admin_secret_2026')
+      return Boolean(ADMIN_TOKEN && urlToken === ADMIN_TOKEN)
     } catch {
       return false
     }
@@ -209,20 +209,6 @@ export default function Admin() {
             <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
               Unlock Dashboard
             </button>
-            <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--lines)' }}>
-              <button
-                type="button"
-                className="btn-secondary"
-                style={{ width: '100%', justifyContent: 'center', fontSize: '0.82rem', padding: '0.5rem' }}
-                onClick={() => {
-                  setTokenInput(ADMIN_TOKEN || 'dronetv_admin_secret_2026')
-                  setAuthed(true)
-                  setLoginError('')
-                }}
-              >
-                Quick Demo Access (Auto-fill Token)
-              </button>
-            </div>
           </form>
         </motion.div>
       </div>

@@ -17,7 +17,7 @@ export const requireAdminAuth = (
     providedToken = tokenHeader.trim();
   }
 
-  if (providedToken !== env.ADMIN_TOKEN) {
+  if (!providedToken || providedToken !== env.ADMIN_TOKEN) {
     res.status(401).json({
       error: "Unauthorized",
     });

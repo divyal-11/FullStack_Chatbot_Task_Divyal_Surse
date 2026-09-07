@@ -16,7 +16,7 @@ This project strictly fulfills all requirements of the **IPAGE Group Full Stack 
 | **Admin Dashboard** | Direct Route | [https://full-stack-chatbot-task-divyal-surs.vercel.app/admin](https://full-stack-chatbot-task-divyal-surs.vercel.app/admin) |
 | **API Health Probe** | Public Endpoint | [https://fullstack-chatbot-task-divyal-surse.onrender.com/api/health](https://fullstack-chatbot-task-divyal-surse.onrender.com/api/health) |
 
-> **Admin Demo Token**: `dronetv_admin_secret_2026` *(A 1-click **Quick Demo Access** button is provided on the admin login screen for instant evaluation)*
+> **Admin Access**: Protected administrative operations and the admin dashboard require authentication using your configured `ADMIN_TOKEN` / `VITE_ADMIN_TOKEN`.
 
 ---
 
