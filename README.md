@@ -6,384 +6,378 @@ This project strictly fulfills all requirements of the **IPAGE Group Full Stack 
 
 ---
 
-## 🌐 Live Deployments
+## 🌐 Live Demo Links
 
 | Component | Platform | URL |
 |---|---|---|
-| **Frontend** | Vercel | [https://full-stack-chatbot-task-divyal-surs.vercel.app](https://full-stack-chatbot-task-divyal-surs.vercel.app) |
-| **Backend API** | Render | [https://fullstack-chatbot-task-divyal-surse.onrender.com](https://fullstack-chatbot-task-divyal-surse.onrender.com) |
-| **Database** | Neon Cloud PostgreSQL | Hosted on AWS (`ap-southeast-1`) |
-| **Admin Dashboard** | Direct URL | [https://full-stack-chatbot-task-divyal-surs.vercel.app/admin](https://full-stack-chatbot-task-divyal-surs.vercel.app/admin) |
+| **Frontend Application** | Vercel | [https://full-stack-chatbot-task-divyal-surs.vercel.app](https://full-stack-chatbot-task-divyal-surs.vercel.app) |
+| **Backend REST API** | Render | [https://fullstack-chatbot-task-divyal-surse.onrender.com](https://fullstack-chatbot-task-divyal-surse.onrender.com) |
+| **Cloud Database** | Neon PostgreSQL | Hosted on AWS (`ap-southeast-1`) via Serverless Pooler |
+| **Admin Dashboard** | Direct Route | [https://full-stack-chatbot-task-divyal-surs.vercel.app/admin](https://full-stack-chatbot-task-divyal-surs.vercel.app/admin) |
+| **API Health Probe** | Public Endpoint | [https://fullstack-chatbot-task-divyal-surse.onrender.com/api/health](https://fullstack-chatbot-task-divyal-surse.onrender.com/api/health) |
 
-> **Admin Demo Token**: `dronetv_admin_secret_2026` *(Quick Demo Access button available on login page)*
-
----
-
-## 📋 Evaluation Checklist & Feature Compliance
-
-| Requirement | Must Have | Status | Implementation Details |
-|---|:---:|:---:|---|
-| **React + TypeScript** | ✅ | Done | Built with React 19, TypeScript, and Vite with strict typing |
-| **Responsive desktop / tablet / mobile** | ✅ | Done | Fluid CSS Grid & Flexbox, responsive breakpoints at 1024px, 768px, 480px |
-| **Landing / Home Page** | ✅ | Done | High-impact hero, radar animation, stats, testimonials, CTA |
-| **Services Section** | ✅ | Done | 4 enterprise aerial solutions (LiDAR, Training, Thermal, Agriculture) |
-| **Courses / Training Section** | ✅ | Done | 3 DGCA-certified pilot courses with curriculum, duration, and pricing |
-| **Chatbot UI** | ✅ | Done | Floating launcher widget, spring physics transitions (`motion/react`) |
-| **Rule-based Chatbot** | ✅ | Done | Predefined query chips, keyword engine, and contextual responses |
-| **User + Bot Conversation History** | ✅ | Done | Persistent session storage across page reloads via `sessionStorage` |
-| **Unknown-question Fallback** | ✅ | Done | Graceful fallback response with follow-up chips and direct enquiry prompt |
-| **Reset Conversation** | ✅ | Done | One-click `↺` reset button in chat header clearing state and storage |
-| **Enquiry from Chatbot** | ✅ | Done | Embedded interactive lead form inside chat messages |
-| **Enquiry Fields** | ✅ | Done | Name, Email, Phone, User Type, Interest, Message |
-| **Frontend Validation** | ✅ | Done | Client-side regex, email format, phone digits, min-lengths |
-| **Backend Validation** | ✅ | Done | Server-side Zod schemas (`createEnquirySchema`, `updateEnquirySchema`) |
-| **POST Enquiry** | ✅ | Done | `POST /api/enquiries` creates record in PostgreSQL |
-| **GET All Enquiries** | ✅ | Done | `GET /api/enquiries` with search, `userType`, and `status` query filters |
-| **GET Enquiry by ID** | ✅ | Done | `GET /api/enquiries/:id` returns single enquiry record or 404 |
-| **PUT / PATCH Enquiry** | ✅ | Done | Both `PUT` and `PATCH /api/enquiries/:id` supported for status updates |
-| **DELETE Enquiry** | ✅ | Done | `DELETE /api/enquiries/:id` removes enquiry with confirmation |
-| **PostgreSQL Database** | ✅ | Done | Live Neon PostgreSQL managed via Prisma ORM with automated migrations |
-| **Admin Dashboard** | ✅ | Done | `/admin` portal (direct URL only) with KPI overview |
-| **Search Enquiries** | ✅ | Done | Live search by name, email, interest, or message content |
-| **Student / Customer Filter** | ✅ | Done | Filter tabs: `All Types`, `Student`, `Customer`, `Other` |
-| **View Details** | ✅ | Done | "View" modal showing full enquiry payload, timestamps, and metadata |
-| **Change Status** | ✅ | Done | Real-time dropdown changing status with optimistic UI & KPI card update |
-| **Delete Enquiry** | ✅ | Done | Protected delete action with double-confirmation dialog |
-| **Statuses** | ✅ | Done | Exactly matches spec: `New`, `Contacted`, `In Progress`, `Closed` |
-| **Error Handling** | ✅ | Done | Masked 500 errors, clean 400 validation JSON, 404 for missing IDs |
-| **Security Requirements** | ✅ | Done | Helmet security headers, rate limiting (100 req/15 min), sanitized CORS |
-| **Environment Variables** | ✅ | Done | Separated `.env` configs, credentials strictly gitignored |
-| **GitHub + README** | ✅ | Done | Complete documentation, schema explanations, and local run steps |
-| **API Documentation** | ✅ | Done | Detailed request/response schemas with sample cURLs |
-| **Walkthrough Guide** | ✅ | Done | Step-by-step 5–10 min presentation script included below |
+> **Admin Demo Token**: `dronetv_admin_secret_2026` *(A 1-click **Quick Demo Access** button is provided on the admin login screen for instant evaluation)*
 
 ---
 
-## 🎯 Deep Dive: Critical Assignment Highlights
+## 📸 Screenshots
 
-### 1. Chatbot → Enquiry Submission Flow
-The chatbot is an interactive lead acquisition channel:
-1. **Triggering Enquiry Flow**: The user can click the `"Submit an Enquiry"` chip or type natural variations like *"I want to submit an enquiry"*, *"contact"*, *"register"*, or *"quote"*.
-2. **In-Chat Lead Form**: An embedded interactive form renders directly within the chat message stream:
-   - **Full Name** (text, min 2 characters)
-   - **Email Address** (email, regex validated)
-   - **Phone Number** (tel, min 7 digits, formatted)
-   - **User Type** (dropdown: `Student`, `Customer`, `Other`)
-   - **Service / Course Interest** (dropdown of DroneTV offerings)
-   - **Message / Requirements** (textarea, min 5 characters)
-3. **Validation & State**: Immediate inline validation errors if fields are invalid or missing.
-4. **Submission**: Dispatches `POST /api/enquiries`. Upon response, the bot confirms receipt with the unique enquiry reference ID (e.g., `#5PTOI7`) and locks the form with a success badge.
-5. **Session Persistence**: Messages and submission status remain intact even if the user refreshes the page, with a 1-click `↺` reset button to start fresh.
+### 1. Landing Page & Aviation Telemetry Hero
+*Dark aviation instrument panel theme with interactive radar sweep and operational telemetry metrics:*
+![DroneTV Landing Page](docs/screenshots/hero_section.png)
+
+### 2. Commercial Aerial Services & DGCA Courses
+*Full catalog of enterprise drone surveying solutions and DGCA-certified pilot courses:*
+![DroneTV Services](docs/screenshots/services_section.png)
+![DroneTV Courses](docs/screenshots/courses_section.png)
+
+### 3. AI Chatbot with Embedded Lead Routing Form
+*Rule-based AI assistant with quick-reply chips, conversation reset, and in-chat lead enquiry form:*
+![Chatbot Lead Form](docs/screenshots/chatbot_lead_form.png)
+
+### 4. Admin Management Dashboard (`/admin`)
+*Real-time KPI overview cards, search bar, Student/Customer filter tabs, and full enquiries table:*
+![Admin Dashboard](docs/screenshots/admin_dashboard.png)
+
+### 5. Enquiry Inspection Modal & Lifecycle Management
+*Modal displaying complete lead details, timestamp metadata, and live status updater:*
+![Admin Details Modal](docs/screenshots/admin_details_modal.png)
 
 ---
 
-### 2. Multi-Tier Security & Error Handling
+## 🚀 Features
+
+### 1. Modern Aviation Frontend Experience
+- **Single-Page Section Glide**: Fluid smooth-scroll navigation across `#home`, `#services`, `#courses`, and `#contact` sections using GSAP and Motion physics.
+- **Deep-Linked Views**: Dedicated route URLs (`/`, `/services`, `/courses`, `/contact`, `/admin`) with synced navbar active state.
+- **Dark Aviation Aesthetic**: Instrument-panel theme using curated dark tokens (`#0D1117`, `#161B22`), amber highlights (`#F2A63C`), and sage telemetry accents (`#68D391`).
+- **Fully Responsive**: Seamless layout transitions tailored for mobile (<480px), tablet (768px), and high-DPI desktop viewports (>1024px).
+
+### 2. Rule-Based Chatbot Assistant
+- **Predefined Query Matching**: 1-click quick-reply chips for core inquiries:
+  - *"What services does DroneTV provide?"*
+  - *"What courses / training are available?"*
+  - *"How can I contact DroneTV?"*
+  - *"How can I register?"*
+  - *"I am interested in a service."*
+  - *"I am a student."*
+  - *"I want to speak with someone."*
+- **Chatbot → Enquiry Submission Flow**: Prominently allows submitting official enquiries right inside the chat window with all 6 required fields (Name, Email, Phone, User Type, Interest, Message).
+- **Session Continuity**: Entire conversation history stored in `sessionStorage`, persisting across page refreshes.
+- **1-Click Reset (`↺`)**: Clears conversation state and resets storage with a single click.
+- **Unknown-Question Fallback**: Graceful guidance for unmatched queries, suggesting follow-up chips or prompting enquiry routing.
+
+### 3. Administrative Enquiry Portal (`/admin`)
+- **Direct Access URL**: Kept strictly unlinked from public navigation and footers for operational privacy.
+- **Real-Time KPI Cards**: Live counters for **Total Leads**, **New**, **Contacted**, **In Progress**, and **Closed**.
+- **Search & Multi-Filtering**: Instant search by Name, Email, or Interest with tabbed filters for User Type (`All Types`, `Student`, `Customer`, `Other`) and Status (`All Status`, `New`, `Contacted`, `In Progress`, `Closed`).
+- **Detailed Modal Inspection**: "View" button opens an inspector displaying all lead fields and timestamp logs.
+- **Live Status Progression**: Real-time status update dropdown with optimistic UI and instant KPI sync.
+- **Safe Deletion**: Protected delete action with double-confirmation dialog.
+- **CSV Data Export**: 1-click download exporting all filtered leads to CSV format.
+
+### 4. Multi-Layer Security & Error Handling
+- **Frontend Validation**: Client-side regex for email, minimum 7-digit phone, and required lengths.
+- **Network Gateway Security**: Helmet security headers (CSP, HSTS, X-Content-Type-Options) and rate-limiting (100 req / 15 min).
+- **Backend Schema Validation**: Strict Zod validation returning structured HTTP `400 Bad Request` messages.
+- **Error Concealment**: Server/database runtime failures return generic HTTP `500` messages, concealing stack traces and internal connection strings.
+- **Non-Existent Records**: Missing enquiry IDs return clean HTTP `404 Not Found` messages (`{"error": "Enquiry not found"}`).
+
+---
+
+## 🛠️ Technologies Used
+
+| Layer | Technologies |
+|---|---|
+| **Frontend** | React 19, TypeScript, Vite, Motion (`motion/react`), GSAP, Axios |
+| **Backend** | Node.js, Express 5, TypeScript, Zod, Helmet, CORS, Express Rate Limit |
+| **Database & ORM** | PostgreSQL (Neon Cloud Serverless), Prisma ORM 6 |
+| **Deployment & Hosting** | Vercel (Frontend SPA), Render (Backend Web Service), Neon (Cloud PostgreSQL) |
+| **Styling** | Vanilla CSS Design System with custom HSL/Aviation variables, Glassmorphism, CSS Grid & Flexbox |
+
+---
+
+## 📁 Project Structure
 
 ```
-[ User Input ]
-      │
-      ▼
-[ Layer 1: Frontend Validation ]
-  • Immediate client feedback
-  • Regex checks: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ for email
-  • Phone validation: /^\+?[0-9\s\-()]{7,20}$/
-  • Field length constraints
-      │
-      ▼
-[ Layer 2: Network & Gateway Security ]
-  • Helmet: CSP, HSTS, X-Content-Type-Options, Frameguard
-  • Rate Limiting: 100 requests per 15-minute window via express-rate-limit
-  • Strict CORS: Origin validated and sanitized
-      │
-      ▼
-[ Layer 3: Backend Schema Validation (Zod) ]
-  • Strict typing and schema parsing (createEnquirySchema)
-  • Returns HTTP 400 with structured field-level error messages
-      │
-      ▼
-[ Layer 4: Database & Error Masking ]
-  • Prisma ORM with parameterized PostgreSQL queries (SQL injection immune)
-  • Non-existing IDs return clean HTTP 404: {"error": "Enquiry not found"}
-  • Malformed JSON payloads return HTTP 400: {"error": "Invalid JSON payload in request body"}
-  • Internal DB/Server errors return generic HTTP 500 without leaking stack traces or credentials
+fullstack-chatbot-task/
+├── backend/
+│   ├── prisma/
+│   │   ├── migrations/             # SQL migration files
+│   │   │   └── 20260907_init/      # Initial schema migration
+│   │   ├── schema.prisma           # Prisma schema & PostgreSQL enums
+│   │   ├── seed.ts                 # Database seeder script
+│   │   └── dev_data.json           # Automatic fallback data store
+│   ├── src/
+│   │   ├── config/                 # Environment & Prisma client configuration
+│   │   ├── controllers/            # Express controllers (CRUD, stats, health)
+│   │   ├── middleware/             # Validation (Zod) & Error handling
+│   │   ├── routes/                 # Express route definitions
+│   │   ├── services/               # Business logic & database operations
+│   │   ├── validators/             # Zod schemas (create, update, query)
+│   │   ├── app.ts                  # Express app setup, security headers, routing
+│   │   └── index.ts                # Server listener entry point
+│   ├── .env.example
+│   ├── package.json
+│   ├── render.yaml                 # Render infrastructure-as-code deployment config
+│   └── tsconfig.json
+├── docs/
+│   └── screenshots/                # Application screenshots for documentation
+├── frontend/
+│   ├── src/
+│   │   ├── assets/                 # SVGs and static brand icons
+│   │   ├── components/
+│   │   │   ├── Chatbot/            # AI assistant widget & in-chat lead form
+│   │   │   ├── Footer/             # Responsive minimal aviation footer
+│   │   │   ├── Navbar/             # Fixed gliding navbar
+│   │   │   ├── PageTransition/     # Viewport transition wrapper
+│   │   │   └── Radar/              # Interactive radar sweep canvas component
+│   │   ├── pages/
+│   │   │   ├── home.tsx            # Full landing page (Hero, Services, Courses, Contact)
+│   │   │   ├── services.tsx        # Commercial aerial services catalog
+│   │   │   ├── courses.tsx         # DGCA pilot training courses catalog
+│   │   │   ├── contact.tsx         # Dedicated contact & consultation form
+│   │   │   └── admin.tsx           # Admin Enquiry Management Dashboard
+│   │   ├── types/                  # Shared TypeScript interfaces & types
+│   │   ├── utils/                  # Axios API utility functions
+│   │   ├── App.tsx                 # Route definitions & router setup
+│   │   ├── main.tsx                # Application root mounting
+│   │   └── index.css               # Global typography & design tokens
+│   ├── .env.example
+│   ├── package.json
+│   ├── vercel.json                 # Vercel SPA client-side routing rewrites
+│   └── vite.config.ts
+├── API.md                          # Standalone REST API documentation
+├── DroneTV_Assignment_Blueprint.md
+└── README.md
 ```
 
 ---
 
-## 📡 API Reference & Documentation
+## ⚙️ Setup Instructions
 
-### Base URLs
-- **Production**: `https://fullstack-chatbot-task-divyal-surse.onrender.com`
-- **Local**: `http://localhost:5000`
+### Prerequisites
+- **Node.js** (v18 or higher)
+- **npm** (v9 or higher) or yarn
+- **Git**
 
 ---
 
-### 1. Health Check
-```http
-GET /api/health
+### 1. Clone the Repository
+```bash
+git clone https://github.com/divyal-11/FullStack_Chatbot_Task_Divyal_Surse.git
+cd FullStack_Chatbot_Task_Divyal_Surse
 ```
-**Response (200 OK):**
-```json
-{
-  "status": "ok"
+
+---
+
+### 2. Environment Variables Configuration
+
+#### Backend Configuration (`backend/.env`)
+Create a `.env` file in the `backend/` directory:
+```env
+# Server Port
+PORT=5000
+
+# PostgreSQL Connection String (Neon Cloud or Localhost)
+DATABASE_URL="postgresql://neondb_owner:npg_GbEsdmN0Th1P@ep-blue-sun-b3dxnfr5-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+
+# Admin Access Token
+ADMIN_TOKEN=dronetv_admin_secret_2026
+
+# Allowed CORS Origin for Local Development
+CORS_ORIGIN=http://localhost:5173
+
+# Environment Mode
+NODE_ENV=development
+```
+
+#### Frontend Configuration (`frontend/.env`)
+Create a `.env` file in the `frontend/` directory:
+```env
+# Backend Base URL (Point to localhost for local dev or Render for production)
+VITE_API_BASE_URL=http://localhost:5000
+
+# Admin Access Token for Dashboard Unlock
+VITE_ADMIN_TOKEN=dronetv_admin_secret_2026
+```
+
+---
+
+## 🗄️ Database Setup
+
+The project uses **Prisma ORM** with **PostgreSQL**.
+
+### Schema Definition
+The database model includes the `Enquiry` entity with `UserType` and `Status` enums:
+```prisma
+enum UserType {
+  STUDENT
+  CUSTOMER
+  OTHER
+}
+
+enum Status {
+  NEW
+  CONTACTED
+  IN_PROGRESS
+  CLOSED
+}
+
+model Enquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String
+  userType  UserType @default(CUSTOMER)
+  interest  String
+  message   String
+  status    Status   @default(NEW)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 ```
 
----
+### Applying Migrations & Seeding
+From the `backend/` directory:
+```bash
+# Generate Prisma Client
+npx prisma generate
 
-### 2. List Enquiries (with Filters & Search)
-```http
-GET /api/enquiries?search={term}&userType={type}&status={status}
-Headers:
-  x-admin-token: dronetv_admin_secret_2026
-```
-**Query Parameters (Optional):**
-- `search`: Filter by name, email, interest, or message substring.
-- `userType`: `ALL` | `STUDENT` | `CUSTOMER` | `OTHER`
-- `status`: `ALL` | `NEW` | `CONTACTED` | `IN_PROGRESS` | `CLOSED`
+# Apply migrations to your PostgreSQL instance
+npx prisma migrate deploy
 
-**Response (200 OK):**
-```json
-{
-  "data": [
-    {
-      "id": "cmtrjs45g0000ew20m3kp41x8",
-      "name": "Rajesh Verma",
-      "email": "rajesh.verma@aerialops.in",
-      "phone": "+91 98765 12345",
-      "userType": "CUSTOMER",
-      "interest": "Aerial Survey & 3D LiDAR Mapping",
-      "message": "Need full LiDAR mapping survey for a 200 hectare industrial zone.",
-      "status": "IN_PROGRESS",
-      "createdAt": "2026-09-07T18:01:49.060Z",
-      "updatedAt": "2026-09-07T18:14:20.120Z"
-    }
-  ]
-}
+# (Optional) Seed realistic leads into the database
+npx ts-node prisma/seed.ts
 ```
+
+> **Automatic Fallback Engine**: If PostgreSQL is temporarily unreachable or offline during local evaluation, the backend automatically falls back to an internal JSON data store (`backend/prisma/dev_data.json`), ensuring that the frontend and admin dashboard work seamlessly out of the box with zero runtime errors.
 
 ---
 
-### 3. Get Enquiry by ID
-```http
-GET /api/enquiries/:id
-Headers:
-  x-admin-token: dronetv_admin_secret_2026
+## 🏃 Run Instructions
+
+### Running the Backend
+
+```bash
+# Navigate to backend directory
+cd backend
+
+# Install dependencies
+npm install
+
+# Start development server with hot reload
+npm run dev
 ```
-**Response (200 OK):**
+The backend will launch at **`http://localhost:5000`**.
+- Health Check: `http://localhost:5000/api/health`
+- Interactive API Dashboard: `http://localhost:5000/`
+
+---
+
+### Running the Frontend
+
+```bash
+# In a separate terminal, navigate to frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start Vite development server
+npm run dev
+```
+The frontend will launch at **`http://localhost:5173`**.
+- Public Landing Page: `http://localhost:5173`
+- Admin Dashboard: `http://localhost:5173/admin`
+
+---
+
+## 📡 API Endpoints Specification
+
+Complete details and cURL examples are available in [API.md](API.md).
+
+| Method | Endpoint | Access | Purpose | Request Body / Query Params |
+|---|---|:---:|---|---|
+| `GET` | `/` | Public | Interactive API status landing page | — |
+| `GET` | `/api` | Public | API discovery catalog | — |
+| `GET` | `/api/health` | Public | Service health & liveness probe | — |
+| `GET` | `/api/enquiries` | Protected | List all enquiries with search & filters | `?search=&userType=&status=` |
+| `GET` | `/api/enquiries/stats` | Protected | KPI metrics summary | — |
+| `GET` | `/api/enquiries/:id` | Protected | Retrieve single enquiry by ID | — |
+| `POST` | `/api/enquiries` | Public | Create new enquiry (Chatbot / Contact) | `{ name, email, phone, userType, interest, message }` |
+| `PUT` | `/api/enquiries/:id` | Protected | Update enquiry status / fields | `{ status }` |
+| `PATCH` | `/api/enquiries/:id` | Protected | Update enquiry status / fields | `{ status }` |
+| `DELETE` | `/api/enquiries/:id` | Protected | Delete enquiry record | — |
+
+### Sample `POST /api/enquiries` Request
+```bash
+curl -X POST "https://fullstack-chatbot-task-divyal-surse.onrender.com/api/enquiries" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Rajesh Verma",
+    "email": "rajesh.verma@aerialops.in",
+    "phone": "+91 98765 12345",
+    "userType": "CUSTOMER",
+    "interest": "Aerial Survey & 3D LiDAR Mapping",
+    "message": "Need full LiDAR mapping survey for a 200 hectare industrial zone."
+  }'
+```
+
+### Sample `POST /api/enquiries` Response (`201 Created`)
 ```json
 {
   "data": {
-    "id": "cmtrjs45g0000ew20m3kp41x8",
+    "id": "cmtrkx12a0001ew20m7zq91p3",
     "name": "Rajesh Verma",
     "email": "rajesh.verma@aerialops.in",
     "phone": "+91 98765 12345",
     "userType": "CUSTOMER",
     "interest": "Aerial Survey & 3D LiDAR Mapping",
     "message": "Need full LiDAR mapping survey for a 200 hectare industrial zone.",
-    "status": "IN_PROGRESS",
-    "createdAt": "2026-09-07T18:01:49.060Z",
-    "updatedAt": "2026-09-07T18:14:20.120Z"
-  }
-}
-```
-**Error Response (404 Not Found):**
-```json
-{
-  "error": "Enquiry not found"
-}
-```
-
----
-
-### 4. Create New Enquiry (Public / Chatbot)
-```http
-POST /api/enquiries
-Content-Type: application/json
-```
-**Request Body:**
-```json
-{
-  "name": "Priya Patel",
-  "email": "priya.patel@agrotech.in",
-  "phone": "+91 91234 56789",
-  "userType": "CUSTOMER",
-  "interest": "Precision Agriculture & Crop Health",
-  "message": "Requesting multispectral crop inspection for 500-acre farm in Gujarat."
-}
-```
-**Response (201 Created):**
-```json
-{
-  "data": {
-    "id": "cmtrkx12a0001ew20m7zq91p3",
-    "name": "Priya Patel",
-    "email": "priya.patel@agrotech.in",
-    "phone": "+91 91234 56789",
-    "userType": "CUSTOMER",
-    "interest": "Precision Agriculture & Crop Health",
-    "message": "Requesting multispectral crop inspection for 500-acre farm in Gujarat.",
     "status": "NEW",
     "createdAt": "2026-09-07T18:20:15.000Z",
     "updatedAt": "2026-09-07T18:20:15.000Z"
   }
 }
 ```
-**Error Response (400 Bad Request — Validation Failure):**
-```json
-{
-  "error": "Validation failed",
-  "details": {
-    "email": ["Please provide a valid email address"],
-    "phone": ["Please enter a valid phone number"]
-  }
-}
-```
 
 ---
 
-### 5. Update Enquiry Status (PUT / PATCH)
-```http
-PATCH /api/enquiries/:id
-PUT /api/enquiries/:id
-Content-Type: application/json
-Headers:
-  x-admin-token: dronetv_admin_secret_2026
-```
-**Request Body:**
-```json
-{
-  "status": "CONTACTED"
-}
-```
-**Response (200 OK):**
-```json
-{
-  "data": {
-    "id": "cmtrjs45g0000ew20m3kp41x8",
-    "status": "CONTACTED",
-    "updatedAt": "2026-09-07T18:22:30.000Z"
-  }
-}
-```
+## 📹 Walkthrough Guide (5–10 Minutes)
 
----
+When recording your demonstration video or evaluating the application:
 
-### 6. Delete Enquiry
-```http
-DELETE /api/enquiries/:id
-Headers:
-  x-admin-token: dronetv_admin_secret_2026
-```
-**Response (204 No Content)**
-
----
-
-### 7. KPI Metrics Summary
-```http
-GET /api/enquiries/stats
-Headers:
-  x-admin-token: dronetv_admin_secret_2026
-```
-**Response (200 OK):**
-```json
-{
-  "data": {
-    "total": 6,
-    "new": 2,
-    "contacted": 2,
-    "inProgress": 1,
-    "closed": 1
-  }
-}
-```
-
----
-
-## 💻 Local Development Setup
-
-### 1. Clone & Install Dependencies
-```bash
-git clone https://github.com/divyal-11/FullStack_Chatbot_Task_Divyal_Surse.git
-cd FullStack_Chatbot_Task_Divyal_Surse
-
-# Install backend packages
-cd backend
-npm install
-
-# Install frontend packages
-cd ../frontend
-npm install
-```
-
-### 2. Configure Environment Variables
-Create `.env` in `backend/`:
-```env
-PORT=5000
-DATABASE_URL="postgresql://neondb_owner:npg_GbEsdmN0Th1P@ep-blue-sun-b3dxnfr5-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-ADMIN_TOKEN=dronetv_admin_secret_2026
-CORS_ORIGIN=http://localhost:5173
-NODE_ENV=development
-```
-
-Create `.env` in `frontend/`:
-```env
-VITE_API_BASE_URL=http://localhost:5000
-VITE_ADMIN_TOKEN=dronetv_admin_secret_2026
-```
-
-### 3. Run Development Servers
-```bash
-# Terminal 1: Backend
-cd backend
-npm run dev
-
-# Terminal 2: Frontend
-cd frontend
-npm run dev
-```
-
-Visit:
-- Frontend: `http://localhost:5173`
-- Admin Dashboard: `http://localhost:5173/admin`
-- Backend Health: `http://localhost:5000/api/health`
-
----
-
-## 📹 5–10 Minute Walkthrough Script (Evaluation Guide)
-
-When presenting or recording the walkthrough video:
-
-1. **Introduction (1 min)**:
-   - Introduce DroneTV: enterprise aerial survey and DGCA pilot academy.
-   - Mention tech stack: React 19 + TypeScript, Node.js + Express, Prisma + PostgreSQL (Neon), hosted on Vercel + Render.
-2. **Landing Experience & Navigation (1.5 min)**:
-   - Show responsive desktop, tablet, and mobile layouts.
-   - Highlight the aviation dark theme, telemetry aesthetic, radar sweep animation, and smooth section glide.
-3. **Rule-Based Chatbot & Q&A (1.5 min)**:
-   - Click floating *"Ask DroneTV AI"* launcher.
-   - Click predefined query chips (*"What services does DroneTV provide?"*, *"What courses are available?"*).
-   - Type an unrecognized question to demonstrate the fallback response.
-   - Click `↺` to demonstrate conversation reset and session clearing.
-4. **Chatbot → Enquiry Submission Flow (2 min)**:
+1. **Architecture & Stack Overview (1 min)**:
+   - Introduce DroneTV: commercial drone operations and DGCA flight academy.
+   - Explain the full-stack architecture: React 19 + TypeScript, Node.js + Express, Neon Serverless PostgreSQL via Prisma ORM, deployed on Vercel and Render.
+2. **Landing Page & Responsiveness (1.5 min)**:
+   - Walk through the landing page sections (`#home`, `#services`, `#courses`, `#contact`).
+   - Showcase the custom aviation dark theme, radar sweep animation, and responsive layout scaling across mobile and desktop.
+3. **Rule-Based Chatbot (1.5 min)**:
+   - Open the floating chatbot (*"Ask DroneTV AI"*).
+   - Click predefined chips (*"What services does DroneTV provide?"*, *"What courses are available?"*).
+   - Enter an unrecognized question to show the fallback handler.
+   - Click `↺` to demonstrate conversation history reset and `sessionStorage` clearing.
+4. **Chatbot → Enquiry Flow (2 min)**:
    - Click *"Submit an Enquiry"*.
-   - Trigger validation errors by submitting empty/invalid values.
-   - Fill in valid lead details (Name, Email, Phone, User Type: Customer, Interest: Aerial Survey, Message).
-   - Submit and show the confirmation message with the generated reference ID.
+   - Demonstrate client-side validation errors by attempting to submit empty fields.
+   - Fill in valid details (Name, Email, Phone, User Type, Interest, Message).
+   - Submit and observe the green success badge and the bot's confirmation message with the generated reference ID.
 5. **Security & Validation Architecture (1.5 min)**:
-   - Explain the 4-layer validation flow (Frontend regex → Gateway Rate Limiting/Helmet → Backend Zod validation → PostgreSQL).
-   - Show how backend returns clean 400/404 messages while masking internal server errors (500).
-6. **Admin Dashboard at `/admin` (2 min)**:
-   - Open `/admin` via direct URL.
-   - Authenticate with the admin token (or click *"Quick Demo Access"*).
-   - Point out the real-time KPI cards (Total, New, Contacted, In Progress, Closed).
-   - Show the newly submitted enquiry at the top of the table.
-   - Click *"View"* to inspect the modal details.
-   - Change status to *"In Progress"* and demonstrate real-time KPI card synchronization.
-   - Test search and filtering by *"Customer"*.
-   - Demonstrate the CSV export and delete confirmation dialog.
+   - Explain the 4-layer validation pipeline (Frontend regex → Gateway Rate Limiting/Helmet → Backend Zod schema → PostgreSQL constraints).
+   - Show how backend returns structured HTTP 400 messages for invalid data while masking internal 500 server errors.
+6. **Admin Dashboard (`/admin`) (2 min)**:
+   - Navigate directly to `/admin` (not linked in public navigation for privacy).
+   - Log in with the admin token (or *"Quick Demo Access"*).
+   - Inspect the real-time KPI cards (Total, New, Contacted, In Progress, Closed).
+   - Locate the newly submitted enquiry from the chatbot.
+   - Click *"View"* to open the details modal.
+   - Update the status to *"In Progress"* and verify that table and KPI counts update instantly.
+   - Filter by *"Customer"* and perform a search.
+   - Click *"Export CSV"* to download the enquiries.
 
 ---
 
-## 🛡️ License & Credits
-Built for the IPAGE Group Full Stack Developer Technical Assignment. Designed and engineered by **Divyal Surse**.
+## 🛡️ License & Authorship
+Built for the **IPAGE Group Full Stack Developer Technical Assignment**. Designed and engineered by **Divyal Surse**.
