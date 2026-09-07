@@ -170,6 +170,13 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api/enquiries", enquiriesRouter);
 
+// Handle unknown API endpoints with clean JSON response
+app.use("/api", (req, res) => {
+  res.status(404).json({
+    error: `Cannot ${req.method} ${req.path} - Endpoint not found`,
+  });
+});
+
 app.use(errorHandler);
 
 export default app;
