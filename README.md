@@ -68,7 +68,7 @@ This project strictly fulfills all requirements of the **IPAGE Group Full Stack 
 - **Unknown-Question Fallback**: Graceful guidance for unmatched queries, suggesting follow-up chips or prompting enquiry routing.
 
 ### 3. Administrative Enquiry Portal (`/admin`)
-- **Direct Access URL**: Kept strictly unlinked from public navigation and footers for operational privacy.
+- **Navbar Access & Direct Route**: Accessible directly via the **Admin** button in the top navigation bar or via the direct route `/admin`.
 - **Real-Time KPI Cards**: Live counters for **Total Leads**, **New**, **Contacted**, **In Progress**, and **Closed**.
 - **Search & Multi-Filtering**: Instant search by Name, Email, or Interest with tabbed filters for User Type (`All Types`, `Student`, `Customer`, `Other`) and Status (`All Status`, `New`, `Contacted`, `In Progress`, `Closed`).
 - **Detailed Modal Inspection**: "View" button opens an inspector displaying all lead fields and timestamp logs.
