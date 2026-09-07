@@ -120,7 +120,7 @@ export default function Contact() {
               <h2>Let's talk about your project</h2>
               <p>
                 Whether you need aerial footage for a production, drone data for your farm,
-                or want to enrol in one of our certified courses — we're here to help.
+                or want to enroll in one of our certified courses — we're here to help.
               </p>
               <div className="contact-details">
                 <div className="contact-detail-item">

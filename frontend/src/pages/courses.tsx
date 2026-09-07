@@ -185,7 +185,7 @@ export default function Courses() {
                   ))}
                 </div>
 
-                <Link to="/contact" className="btn-primary">Enrol Now</Link>
+                <Link to="/contact" className="btn-primary">Enroll Now</Link>
               </motion.div>
             ))}
           </motion.div>

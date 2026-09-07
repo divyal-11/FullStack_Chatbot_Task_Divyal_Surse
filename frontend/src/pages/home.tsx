@@ -481,7 +481,7 @@ export default function Home() {
                     className="btn-secondary course-panel-btn" 
                     onClick={() => handleEnquireTarget(c.interestVal)}
                   >
-                    Enrol in Course →
+                    Enroll in Course →
                   </button>
                 </div>
               </motion.div>
