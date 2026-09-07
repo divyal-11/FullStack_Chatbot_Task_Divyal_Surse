@@ -344,40 +344,5 @@ curl -X POST "https://fullstack-chatbot-task-divyal-surse.onrender.com/api/enqui
 
 ---
 
-## 📹 Walkthrough Guide (5–10 Minutes)
-
-When recording your demonstration video or evaluating the application:
-
-1. **Architecture & Stack Overview (1 min)**:
-   - Introduce DroneTV: commercial drone operations and DGCA flight academy.
-   - Explain the full-stack architecture: React 19 + TypeScript, Node.js + Express, Neon Serverless PostgreSQL via Prisma ORM, deployed on Vercel and Render.
-2. **Landing Page & Responsiveness (1.5 min)**:
-   - Walk through the landing page sections (`#home`, `#services`, `#courses`, `#contact`).
-   - Showcase the custom aviation dark theme, radar sweep animation, and responsive layout scaling across mobile and desktop.
-3. **Rule-Based Chatbot (1.5 min)**:
-   - Open the floating chatbot (*"Ask DroneTV AI"*).
-   - Click predefined chips (*"What services does DroneTV provide?"*, *"What courses are available?"*).
-   - Enter an unrecognized question to show the fallback handler.
-   - Click `↺` to demonstrate conversation history reset and `sessionStorage` clearing.
-4. **Chatbot → Enquiry Flow (2 min)**:
-   - Click *"Submit an Enquiry"*.
-   - Demonstrate client-side validation errors by attempting to submit empty fields.
-   - Fill in valid details (Name, Email, Phone, User Type, Interest, Message).
-   - Submit and observe the green success badge and the bot's confirmation message with the generated reference ID.
-5. **Security & Validation Architecture (1.5 min)**:
-   - Explain the 4-layer validation pipeline (Frontend regex → Gateway Rate Limiting/Helmet → Backend Zod schema → PostgreSQL constraints).
-   - Show how backend returns structured HTTP 400 messages for invalid data while masking internal 500 server errors.
-6. **Admin Dashboard (`/admin`) (2 min)**:
-   - Navigate directly to `/admin` (not linked in public navigation for privacy).
-   - Log in with the admin token (or *"Quick Demo Access"*).
-   - Inspect the real-time KPI cards (Total, New, Contacted, In Progress, Closed).
-   - Locate the newly submitted enquiry from the chatbot.
-   - Click *"View"* to open the details modal.
-   - Update the status to *"In Progress"* and verify that table and KPI counts update instantly.
-   - Filter by *"Customer"* and perform a search.
-   - Click *"Export CSV"* to download the enquiries.
-
----
-
 ## 🛡️ License & Authorship
 Built for the **IPAGE Group Full Stack Developer Technical Assignment**. Designed and engineered by **Divyal Surse**.
