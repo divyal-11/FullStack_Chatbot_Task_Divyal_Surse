@@ -81,8 +81,13 @@ export default function Contact() {
     try {
       await submitEnquiry({ ...form, userType: form.userType as UserType })
       setSubmitted(true)
-    } catch {
-      setApiError('Something went wrong. Please try again or contact us directly.')
+    } catch (err: any) {
+      const backendMsg = err?.response?.data?.details
+        ? Object.entries(err.response.data.details)
+            .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(', ')}`)
+            .join(' | ')
+        : err?.response?.data?.error || 'Something went wrong. Please try again or contact us directly.'
+      setApiError(backendMsg)
     } finally {
       setSubmitting(false)
     }

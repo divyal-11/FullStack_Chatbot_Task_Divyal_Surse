@@ -31,6 +31,13 @@ export const getEnquiries = async (params?: {
   return res.data;
 };
 
+export const getEnquiryById = async (id: string) => {
+  const res = await api.get<ApiResponse<Enquiry>>(`/api/enquiries/${id}`, {
+    headers: adminHeaders(),
+  });
+  return res.data;
+};
+
 export const getStats = async () => {
   const res = await api.get<ApiResponse<EnquiryStats>>('/api/enquiries/stats', {
     headers: adminHeaders(),

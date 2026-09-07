@@ -6,6 +6,7 @@ import './Chatbot.css'
 
 // ── Predefined Questions per Assignment Specification ───────────────────────
 export const PREDEFINED_QUESTIONS = [
+  'Submit an Enquiry',
   'What services does DroneTV provide?',
   'What courses / training are available?',
   'How can I contact DroneTV?',
@@ -18,8 +19,14 @@ export const PREDEFINED_QUESTIONS = [
 // ── Rule-Based Response Engine ─────────────────────────────────────────────
 const RESPONSES: { keywords: string[]; reply: string; chips?: string[]; showForm?: boolean }[] = [
   {
+    keywords: ['submit an enquiry', 'submit enquiry', 'enquiry', 'inquiry', 'enquire', 'book', 'application', 'fill form'],
+    reply: "I'd be glad to assist you with submitting an official enquiry! Please provide your details below and our coordinator will get in touch promptly: 👇",
+    showForm: true,
+    chips: ['What services does DroneTV provide?', 'What courses / training are available?', 'How can I contact DroneTV?'],
+  },
+  {
     keywords: ['hello', 'hi', 'hey', 'greetings', 'morning', 'evening'],
-    reply: "Hello! Welcome to DroneTV. I'm your AI flight and training assistant. How can I assist you today?",
+    reply: "Hello! Welcome to DroneTV. I'm your AI flight and training assistant. How can I assist you today? You can ask about our DGCA certifications, aerial services, or submit an enquiry directly.",
     chips: PREDEFINED_QUESTIONS,
   },
   {
@@ -74,35 +81,48 @@ const FALLBACK_CHIPS = PREDEFINED_QUESTIONS
 function getResponse(input: string): { reply: string; chips: string[]; showForm?: boolean } {
   const lower = input.toLowerCase().trim()
 
-  // Exact matching against predefined questions
-  if (lower.includes('service') && (lower.includes('dronetv provide') || lower.includes('what services'))) {
-    return { reply: RESPONSES[1].reply, chips: RESPONSES[1].chips || FALLBACK_CHIPS, showForm: RESPONSES[1].showForm }
-  }
-  if (lower.includes('course') || lower.includes('training are available')) {
-    return { reply: RESPONSES[2].reply, chips: RESPONSES[2].chips || FALLBACK_CHIPS, showForm: RESPONSES[2].showForm }
-  }
-  if (lower.includes('contact') && !lower.includes('speak')) {
-    return { reply: RESPONSES[3].reply, chips: RESPONSES[3].chips || FALLBACK_CHIPS, showForm: RESPONSES[3].showForm }
-  }
-  if (lower.includes('register') || lower.includes('enroll') || lower.includes('enrol')) {
-    return { reply: RESPONSES[4].reply, chips: RESPONSES[4].chips || FALLBACK_CHIPS, showForm: RESPONSES[4].showForm }
-  }
-  if (lower.includes('interested in a service') || (lower.includes('interested') && lower.includes('service'))) {
-    return { reply: RESPONSES[5].reply, chips: RESPONSES[5].chips || FALLBACK_CHIPS, showForm: RESPONSES[5].showForm }
-  }
-  if (lower.includes('student') || lower.includes('i am a student')) {
-    return { reply: RESPONSES[6].reply, chips: RESPONSES[6].chips || FALLBACK_CHIPS, showForm: RESPONSES[6].showForm }
-  }
-  if (lower.includes('speak with someone') || lower.includes('speak to someone') || lower.includes('speak') || lower.includes('call')) {
-    return { reply: RESPONSES[7].reply, chips: RESPONSES[7].chips || FALLBACK_CHIPS, showForm: RESPONSES[7].showForm }
+  // 1. Explicit enquiry trigger
+  if (
+    lower.includes('enquiry') ||
+    lower.includes('inquiry') ||
+    lower.includes('submit an enquiry') ||
+    lower.includes('submit enquiry') ||
+    lower.includes('fill form')
+  ) {
+    return { reply: RESPONSES[0].reply, chips: RESPONSES[0].chips || FALLBACK_CHIPS, showForm: true }
   }
 
-  // Keyword check
+  // 2. Exact matching against predefined questions & topics
+  if (lower.includes('service') && (lower.includes('dronetv provide') || lower.includes('what services'))) {
+    return { reply: RESPONSES[2].reply, chips: RESPONSES[2].chips || FALLBACK_CHIPS, showForm: RESPONSES[2].showForm }
+  }
+  if (lower.includes('course') || lower.includes('training are available')) {
+    return { reply: RESPONSES[3].reply, chips: RESPONSES[3].chips || FALLBACK_CHIPS, showForm: RESPONSES[3].showForm }
+  }
+  if (lower.includes('contact') && !lower.includes('speak')) {
+    return { reply: RESPONSES[4].reply, chips: RESPONSES[4].chips || FALLBACK_CHIPS, showForm: RESPONSES[4].showForm }
+  }
+  if (lower.includes('register') || lower.includes('enroll') || lower.includes('enrol')) {
+    return { reply: RESPONSES[5].reply, chips: RESPONSES[5].chips || FALLBACK_CHIPS, showForm: RESPONSES[5].showForm }
+  }
+  if (lower.includes('interested in a service') || (lower.includes('interested') && lower.includes('service'))) {
+    return { reply: RESPONSES[6].reply, chips: RESPONSES[6].chips || FALLBACK_CHIPS, showForm: RESPONSES[6].showForm }
+  }
+  if (lower.includes('student') || lower.includes('i am a student')) {
+    return { reply: RESPONSES[7].reply, chips: RESPONSES[7].chips || FALLBACK_CHIPS, showForm: RESPONSES[7].showForm }
+  }
+  if (lower.includes('speak with someone') || lower.includes('speak to someone') || lower.includes('speak') || lower.includes('call')) {
+    return { reply: RESPONSES[8].reply, chips: RESPONSES[8].chips || FALLBACK_CHIPS, showForm: RESPONSES[8].showForm }
+  }
+
+  // 3. Keyword scan
   for (const r of RESPONSES) {
     if (r.keywords.some(k => lower.includes(k))) {
       return { reply: r.reply, chips: r.chips || FALLBACK_CHIPS, showForm: r.showForm }
     }
   }
+
+  // 4. Unknown question fallback
   return { reply: FALLBACK_REPLY, chips: FALLBACK_CHIPS }
 }
 
@@ -119,7 +139,7 @@ const INITIAL_MESSAGES: Message[] = [
   {
     id: '0',
     role: 'bot',
-    text: "Welcome to DroneTV. I'm your technical flight & training assistant. Select a common query below or ask anything about our DGCA courses and aerial services:",
+    text: "Welcome to DroneTV. I'm your AI flight and training assistant. You can ask me questions about our DGCA courses and aerial services, or submit an official enquiry directly here:",
   },
 ]
 
@@ -259,16 +279,16 @@ export default function Chatbot() {
 
                     {/* Embedded Lead Capture Form */}
                     {msg.showForm && !msg.formSubmitted && (
-                      <InChatLeadForm onSubmit={(name, email) => {
+                      <InChatLeadForm onSubmit={(name, email, enqId) => {
                         setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, formSubmitted: true } : m))
-                        addBotResponse(`Thank you, ${name}! Your enquiry has been received. Our coordinator will contact you directly at ${email} within 24 hours.`)
+                        addBotResponse(`Thank you, ${name}! Your enquiry${enqId ? ` (#${enqId.slice(-6).toUpperCase()})` : ''} has been registered in our database. Our flight operations coordinator will contact you directly at ${email} within 24 hours.`)
                         setChips(INITIAL_CHIPS)
                       }} />
                     )}
 
                     {msg.showForm && msg.formSubmitted && (
-                      <p style={{ fontSize: '0.8rem', color: 'var(--sage)', marginTop: '0.5rem', fontWeight: 600 }}>
-                        ✓ Details submitted successfully
+                      <p style={{ fontSize: '0.8rem', color: 'var(--sage)', marginTop: '0.5rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                        <span>✓</span> Details submitted successfully to database.
                       </p>
                     )}
                   </div>
@@ -361,7 +381,7 @@ export default function Chatbot() {
 }
 
 // ── In-Chat Lead Form Component (Part 3 Specification) ─────────────────────
-function InChatLeadForm({ onSubmit }: { onSubmit: (name: string, email: string) => void }) {
+function InChatLeadForm({ onSubmit }: { onSubmit: (name: string, email: string, enquiryId?: string) => void }) {
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -417,7 +437,7 @@ function InChatLeadForm({ onSubmit }: { onSubmit: (name: string, email: string) 
     setSubmitting(true)
     setError('')
     try {
-      await submitEnquiry({
+      const res = await submitEnquiry({
         name: form.name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim(),
@@ -425,9 +445,14 @@ function InChatLeadForm({ onSubmit }: { onSubmit: (name: string, email: string) 
         interest: form.interest.trim(),
         message: form.message.trim(),
       })
-      onSubmit(form.name.trim(), form.email.trim())
-    } catch {
-      setError('Failed to submit enquiry. Please check connection and try again.')
+      onSubmit(form.name.trim(), form.email.trim(), res?.data?.id)
+    } catch (err: any) {
+      const backendError = err?.response?.data?.details
+        ? Object.entries(err.response.data.details)
+            .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(', ')}`)
+            .join(' | ')
+        : err?.response?.data?.error || 'Failed to submit enquiry. Please check connection and try again.'
+      setError(backendError)
     } finally {
       setSubmitting(false)
     }

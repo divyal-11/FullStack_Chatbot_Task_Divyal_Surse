@@ -30,6 +30,12 @@ router.patch(
   controller.updateEnquiry
 );
 
+router.put(
+  "/:id",
+  validateBody(updateEnquirySchema),
+  controller.updateEnquiry
+);
+
 router.delete("/:id", controller.deleteEnquiry);
 
 export default router;

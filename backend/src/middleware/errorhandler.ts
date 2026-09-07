@@ -24,6 +24,14 @@ export const errorHandler = (
     return;
   }
 
+  // Malformed JSON syntax in request body
+  if (err instanceof SyntaxError && "status" in err && (err as any).status === 400) {
+    res.status(400).json({
+      error: "Invalid JSON payload in request body",
+    });
+    return;
+  }
+
   // Prisma record not found error (P2025)
   if ((err as any).code === "P2025") {
     res.status(404).json({
