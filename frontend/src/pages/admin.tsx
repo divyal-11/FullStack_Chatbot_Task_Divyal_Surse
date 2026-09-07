@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { motion, useReducedMotion, type Variants } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { getEnquiries, getStats, updateEnquiryStatus, deleteEnquiry } from '../utils/api'
 import type { Enquiry, EnquiryStats } from '../types'
 import './admin.css'
@@ -53,11 +53,19 @@ export default function Admin() {
       if (userTypeFilter !== 'ALL') params.userType = userTypeFilter
       if (statusFilter !== 'ALL') params.status = statusFilter
 
-      const [eRes, sRes] = await Promise.all([getEnquiries(params), getStats()])
-      setEnquiries(eRes.data)
-      setStats(sRes.data)
-    } catch {
-      setError('Failed to load data. Check that the backend is running.')
+      try {
+        const eRes = await getEnquiries(params)
+        setEnquiries(eRes.data)
+      } catch {
+        setError('Failed to load enquiries. Check that the backend is running.')
+      }
+
+      try {
+        const sRes = await getStats()
+        setStats(sRes.data)
+      } catch {
+        // Non-blocking stats update
+      }
     } finally {
       setLoading(false)
     }
@@ -100,25 +108,6 @@ export default function Admin() {
   }
 
   const shouldReduceMotion = useReducedMotion()
-
-  const staggerContainer: Variants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.04,
-      },
-    },
-  }
-
-  const staggerItem: Variants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 12 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
-    },
-  }
 
   // ── LOGIN GATE ──
   if (!authed) {
@@ -170,12 +159,12 @@ export default function Admin() {
     <div className="admin-page">
       <motion.div 
         className="container"
-        variants={staggerContainer}
-        initial="hidden"
-        animate="visible"
+        initial={{ opacity: shouldReduceMotion ? 1 : 0, y: shouldReduceMotion ? 0 : 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
       >
         {/* Header */}
-        <motion.div className="admin-header" variants={staggerItem}>
+        <div className="admin-header">
           <div>
             <h1>Enquiry Dashboard</h1>
             <p>Manage and track all incoming leads</p>
@@ -188,11 +177,11 @@ export default function Admin() {
               Logout
             </button>
           </div>
-        </motion.div>
+        </div>
 
         {/* KPI Cards */}
         {stats && (
-          <motion.div className="kpi-grid" variants={staggerItem}>
+          <div className="kpi-grid">
             <div className="kpi-card">
               <div className="kpi-label">Total Leads</div>
               <div className="kpi-value">{stats.total}</div>
@@ -213,11 +202,11 @@ export default function Admin() {
               <div className="kpi-label">Closed</div>
               <div className="kpi-value">{stats.closed}</div>
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Toolbar */}
-        <motion.div className="admin-toolbar" variants={staggerItem}>
+        <div className="admin-toolbar">
           <input
             className="search-input"
             type="search"
@@ -240,13 +229,13 @@ export default function Admin() {
               </button>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Error */}
         {error && <p style={{ color: '#f87171', marginBottom: '1rem' }}>{error}</p>}
 
         {/* Table */}
-        <motion.div className="admin-table-wrap" variants={staggerItem}>
+        <div className="admin-table-wrap">
           {loading ? (
             <div className="admin-loading">Loading enquiries...</div>
           ) : enquiries.length === 0 ? (
@@ -296,7 +285,7 @@ export default function Admin() {
               </tbody>
             </table>
           )}
-        </motion.div>
+        </div>
       </motion.div>
 
       {/* Detail Modal */}

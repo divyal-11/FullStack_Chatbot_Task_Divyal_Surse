@@ -15,6 +15,7 @@ router.get(
   controller.getAllEnquiries
 );
 
+router.get("/stats", controller.getStats);
 router.get("/:id", controller.getEnquiry);
 
 router.post(

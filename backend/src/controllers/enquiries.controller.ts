@@ -11,18 +11,31 @@ export const getAllEnquiries = async (
     const { search, userType, status } = req.query;
 
     const enquiries = await enquiryService.listEnquiries({
-      search: typeof search === "string" ? search : undefined,
+      search: typeof search === "string" && search.trim() ? search.trim() : undefined,
       userType:
-        typeof userType === "string"
+        typeof userType === "string" && userType !== "ALL"
           ? (userType as UserType)
           : undefined,
       status:
-        typeof status === "string"
+        typeof status === "string" && status !== "ALL"
           ? (status as Status)
           : undefined,
     });
 
     res.status(200).json({ data: enquiries });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getStats = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const stats = await enquiryService.getStats();
+    res.status(200).json({ data: stats });
   } catch (error) {
     next(error);
   }
