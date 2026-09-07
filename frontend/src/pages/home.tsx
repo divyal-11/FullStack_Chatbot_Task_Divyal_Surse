@@ -297,12 +297,6 @@ export default function Home() {
             initial="hidden"
             animate="visible"
           >
-            {/* Eyebrow Label */}
-            <motion.span className="hero-tag" variants={fadeUpVariants}>
-              <span className="hero-tag-dot" />
-              Aviation & Survey Intelligence
-            </motion.span>
-
             {/* Editorial Masked Split-Text Reveal */}
             <h1 className="hero-title" aria-label="See the ground before you fly.">
               <span className="hero-title-line-mask">
@@ -311,7 +305,7 @@ export default function Home() {
                 </motion.span>
               </span>
               <span className="hero-title-line-mask">
-                <motion.span className="hero-title-line highlight" variants={lineVariants}>
+                <motion.span className="hero-title-line" variants={lineVariants}>
                   before you fly.
                 </motion.span>
               </span>

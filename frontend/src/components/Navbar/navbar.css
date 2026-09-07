@@ -114,29 +114,6 @@
 .navbar-action {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-}
-
-.navbar-admin-link {
-  font-family: var(--font-heading);
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-decoration: none;
-  padding: 0.5rem 0.85rem;
-  border-radius: var(--radius);
-  border: 1px solid rgba(75, 90, 107, 0.35);
-  background: rgba(255, 255, 255, 0.03);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  display: inline-flex;
-  align-items: center;
-}
-
-.navbar-admin-link:hover {
-  color: var(--accent);
-  border-color: rgba(242, 166, 60, 0.4);
-  background: rgba(242, 166, 60, 0.1);
-  transform: translateY(-1px);
 }
 
 .navbar-cta {
