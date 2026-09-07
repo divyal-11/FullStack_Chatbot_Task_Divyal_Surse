@@ -2,28 +2,32 @@ import { Request, Response, NextFunction } from "express";
 import { env } from "../config/env";
 
 /**
- * Optional or enforced admin auth middleware:
- * - If x-admin-token or Authorization header is provided, it validates against ADMIN_TOKEN.
- * - If an invalid token is provided, returns HTTP 401 Unauthorized.
- * - If in strict mode or protected route, requires a valid token.
+ * Admin authentication middleware:
+ * - Authorization: Bearer <correct-token> -> allowed
+ * - x-admin-token: <correct-token> -> allowed
+ * - Missing token -> 401 Unauthorized
+ * - Wrong token -> 401 Unauthorized
+ * Response does NOT expose internal details.
  */
 export const requireAdminAuth = (
   req: Request,
   res: Response,
   next: NextFunction
 ): void => {
-  const tokenHeader = req.headers["x-admin-token"] as string | undefined;
   const authHeader = req.headers.authorization;
-  const bearerToken = authHeader?.startsWith("Bearer ")
-    ? authHeader.slice(7).trim()
-    : undefined;
+  const tokenHeader = req.headers["x-admin-token"] as string | undefined;
 
-  const providedToken = tokenHeader || bearerToken;
+  let providedToken: string | undefined;
 
-  // If a token was provided but doesn't match the configured secret
-  if (providedToken && providedToken !== env.ADMIN_TOKEN) {
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    providedToken = authHeader.slice(7).trim();
+  } else if (tokenHeader) {
+    providedToken = tokenHeader.trim();
+  }
+
+  if (!providedToken || providedToken !== env.ADMIN_TOKEN) {
     res.status(401).json({
-      error: "Unauthorized: Invalid administrative credentials",
+      error: "Unauthorized",
     });
     return;
   }

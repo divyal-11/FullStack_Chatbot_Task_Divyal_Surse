@@ -18,7 +18,7 @@ router.get(
 );
 
 router.get("/stats", requireAdminAuth, controller.getStats);
-router.get("/:id", controller.getEnquiry);
+router.get("/:id", requireAdminAuth, controller.getEnquiry);
 
 router.post(
   "/",

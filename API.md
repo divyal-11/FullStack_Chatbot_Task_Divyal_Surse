@@ -10,10 +10,16 @@ This document outlines the REST API specification for the DroneTV AI Support & L
 
 ## Authentication & Headers
 
-Protected administrative endpoints require an admin authorization header:
+Protected administrative endpoints require an authorization header (`Authorization: Bearer <token>` or `x-admin-token: <token>`):
 ```http
-x-admin-token: dronetv_admin_secret_2026
+Authorization: Bearer <your-admin-token>
 ```
+*Or via custom header:*
+```http
+x-admin-token: <your-admin-token>
+```
+
+Requests without a valid token return `401 Unauthorized` with `{"error": "Unauthorized"}`.
 
 ---
 
@@ -22,13 +28,13 @@ x-admin-token: dronetv_admin_secret_2026
 | Method | Endpoint | Access | Purpose |
 |---|---|---|---|
 | `GET` | `/api/health` | Public | Service health and liveness probe |
-| `GET` | `/api/enquiries` | Protected | List all enquiries with search, type, and status filtering |
-| `GET` | `/api/enquiries/stats` | Protected | Retrieve KPI summary counts by status |
-| `GET` | `/api/enquiries/:id` | Protected | Fetch a single enquiry by its unique ID |
+| `GET` | `/api/enquiries` | Protected (Admin) | List all enquiries with search, type, and status filtering |
+| `GET` | `/api/enquiries/stats` | Protected (Admin) | Retrieve KPI summary counts by status |
+| `GET` | `/api/enquiries/:id` | Protected (Admin) | Fetch a single enquiry by its unique ID |
 | `POST` | `/api/enquiries` | Public | Submit an enquiry from the website or chatbot |
-| `PUT` | `/api/enquiries/:id` | Protected | Update enquiry details or status |
-| `PATCH` | `/api/enquiries/:id` | Protected | Partially update enquiry fields or status |
-| `DELETE` | `/api/enquiries/:id` | Protected | Delete an enquiry record |
+| `PUT` | `/api/enquiries/:id` | Protected (Admin) | Update enquiry details or status |
+| `PATCH` | `/api/enquiries/:id` | Protected (Admin) | Partially update enquiry fields or status |
+| `DELETE` | `/api/enquiries/:id` | Protected (Admin) | Delete an enquiry record |
 
 ---
 
@@ -295,6 +301,7 @@ All errors conform to predictable JSON structures:
 |---|---|---|
 | `400 Bad Request` | Validation failure on input fields | `{"error": "Validation failed", "details": { ... }}` |
 | `400 Bad Request` | Malformed JSON in request body | `{"error": "Invalid JSON payload in request body"}` |
-| `404 Not Found` | Requested enquiry ID does not exist | `{"error": "Enquiry not found"}` |
+| `401 Unauthorized` | Missing or invalid admin authorization token | `{"error": "Unauthorized"}` |
+| `404 Not Found` | Requested enquiry ID or route does not exist | `{"error": "Enquiry not found"}` |
 | `429 Too Many Requests` | Rate limit exceeded (> 100 requests in 15 min) | `{"message": "Too many requests, please try again later."}` |
 | `500 Internal Error` | Database connection or unhandled runtime failure | `{"error": "An unexpected error occurred. Please try again later."}` |

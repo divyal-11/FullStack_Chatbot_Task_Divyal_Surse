@@ -180,10 +180,10 @@ Create a `.env` file in the `backend/` directory:
 PORT=5000
 
 # PostgreSQL Connection String (Neon Cloud or Localhost)
-DATABASE_URL="postgresql://neondb_owner:npg_GbEsdmN0Th1P@ep-blue-sun-b3dxnfr5-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+DATABASE_URL="postgresql://username:password@hostname:5432/dronetv_db?sslmode=require"
 
-# Admin Access Token
-ADMIN_TOKEN=dronetv_admin_secret_2026
+# Admin Access Token (Protecting all admin endpoints)
+ADMIN_TOKEN="your-secure-admin-token"
 
 # Allowed CORS Origin for Local Development
 CORS_ORIGIN=http://localhost:5173
@@ -195,12 +195,14 @@ NODE_ENV=development
 #### Frontend Configuration (`frontend/.env`)
 Create a `.env` file in the `frontend/` directory:
 ```env
-# Backend Base URL (Point to localhost for local dev or Render for production)
+# Backend Base URL (Point to localhost for local dev or production URL)
 VITE_API_BASE_URL=http://localhost:5000
 
-# Admin Access Token for Dashboard Unlock
-VITE_ADMIN_TOKEN=dronetv_admin_secret_2026
+# Admin Access Token (Supplied with admin requests for evaluation/demo)
+VITE_ADMIN_TOKEN="your-secure-admin-token"
 ```
+
+> **Security Note on Client-Side Tokens**: In client-side single-page applications, variables prefixed with `VITE_` are embedded into the client build. For this demonstration project, `VITE_ADMIN_TOKEN` allows seamless evaluation of the protected admin dashboard and CRUD API. For production architectures, an enterprise admin portal would use httpOnly session cookies or an OAuth 2.0 / JWT identity provider.
 
 ---
 

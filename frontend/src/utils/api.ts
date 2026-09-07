@@ -15,9 +15,13 @@ export const submitEnquiry = async (payload: CreateEnquiryPayload) => {
 };
 
 // ── Admin (all require token) ────────────────────────────
-const adminHeaders = () => ({
-  'x-admin-token': import.meta.env.VITE_ADMIN_TOKEN || '',
-});
+const adminHeaders = () => {
+  const token = import.meta.env.VITE_ADMIN_TOKEN || '';
+  return {
+    'Authorization': `Bearer ${token}`,
+    'x-admin-token': token,
+  };
+};
 
 export const getEnquiries = async (params?: {
   search?: string;
