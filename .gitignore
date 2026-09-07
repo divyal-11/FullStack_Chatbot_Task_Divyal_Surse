@@ -36,3 +36,9 @@ postgres_data/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local notes, boilerplate & deprecated assets
+DroneTV_Assignment_Blueprint.md
+frontend/README.md
+docs/screenshots/services.png
+docs/screenshots/courses.png
