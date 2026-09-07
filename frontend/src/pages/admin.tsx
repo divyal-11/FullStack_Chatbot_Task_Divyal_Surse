@@ -85,25 +85,89 @@ export default function Admin() {
     }
   }
 
-  const handleStatusChange = async (id: string, status: string) => {
+  const statusToStatKey = (st?: string): keyof Omit<EnquiryStats, 'total'> | null => {
+    if (st === 'NEW') return 'new'
+    if (st === 'CONTACTED') return 'contacted'
+    if (st === 'IN_PROGRESS') return 'inProgress'
+    if (st === 'CLOSED') return 'closed'
+    return null
+  }
+
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    const target = enquiries.find(e => e.id === id)
+    const oldStatus = target?.status
+
+    if (oldStatus === newStatus) return
+
+    // Optimistically update table and detail modal
+    setEnquiries(prev => prev.map(e => e.id === id ? { ...e, status: newStatus as Enquiry['status'] } : e))
+    if (selectedEnquiry?.id === id) {
+      setSelectedEnquiry(prev => prev ? { ...prev, status: newStatus as Enquiry['status'] } : null)
+    }
+
+    // Optimistically update KPI cards
+    const oldKey = statusToStatKey(oldStatus)
+    const newKey = statusToStatKey(newStatus)
+    if (oldKey && newKey) {
+      setStats(prev => {
+        if (!prev) return prev
+        return {
+          ...prev,
+          [oldKey]: Math.max(0, prev[oldKey] - 1),
+          [newKey]: prev[newKey] + 1,
+        }
+      })
+    }
+
     try {
-      await updateEnquiryStatus(id, status)
-      setEnquiries(prev => prev.map(e => e.id === id ? { ...e, status: status as Enquiry['status'] } : e))
-      if (selectedEnquiry?.id === id) setSelectedEnquiry(prev => prev ? { ...prev, status: status as Enquiry['status'] } : null)
+      await updateEnquiryStatus(id, newStatus)
+      // Sync authoritative stats from backend
+      const sRes = await getStats()
+      if (sRes?.data) setStats(sRes.data)
     } catch {
       alert('Failed to update status.')
+      if (oldStatus) {
+        setEnquiries(prev => prev.map(e => e.id === id ? { ...e, status: oldStatus as Enquiry['status'] } : e))
+        if (oldKey && newKey) {
+          setStats(prev => {
+            if (!prev) return prev
+            return {
+              ...prev,
+              [oldKey]: prev[oldKey] + 1,
+              [newKey]: Math.max(0, prev[newKey] - 1),
+            }
+          })
+        }
+      }
     }
   }
 
   const handleDelete = async () => {
     if (!deleteTarget) return
+    const target = deleteTarget
+    setDeleteTarget(null)
+
+    // Optimistically remove from table
+    setEnquiries(prev => prev.filter(e => e.id !== target.id))
+
+    // Optimistically update KPI stats
+    const statKey = statusToStatKey(target.status)
+    setStats(prev => {
+      if (!prev) return prev
+      return {
+        ...prev,
+        total: Math.max(0, prev.total - 1),
+        ...(statKey ? { [statKey]: Math.max(0, prev[statKey] - 1) } : {}),
+      }
+    })
+
     try {
-      await deleteEnquiry(deleteTarget.id)
-      setEnquiries(prev => prev.filter(e => e.id !== deleteTarget.id))
-      setStats(prev => prev ? { ...prev, total: prev.total - 1 } : null)
-      setDeleteTarget(null)
+      await deleteEnquiry(target.id)
+      const sRes = await getStats()
+      if (sRes?.data) setStats(sRes.data)
     } catch {
       alert('Failed to delete enquiry.')
+      fetchData()
     }
   }
 
