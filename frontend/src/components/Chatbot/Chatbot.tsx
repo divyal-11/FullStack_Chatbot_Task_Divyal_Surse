@@ -161,10 +161,30 @@ export default function Chatbot() {
   const [typing, setTyping] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  // Listen for custom trigger from Hero CTA
+  // Listen for custom trigger from Hero CTA or URL parameter
   useEffect(() => {
     const handleCustomOpen = () => setOpen(true)
     window.addEventListener('dronetv:open-chat', handleCustomOpen)
+
+    try {
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('chat') === 'form' || params.get('open_chat') === 'true') {
+        setOpen(true)
+        if (params.get('chat') === 'form') {
+          setMessages([
+            {
+              id: 'init-lead-form',
+              role: 'bot',
+              text: "I'd be glad to assist you with submitting an official enquiry! Please provide your details below and our coordinator will get in touch promptly: 👇",
+              showForm: true,
+            },
+          ])
+        }
+      }
+    } catch {
+      // Ignore in SSR
+    }
+
     return () => window.removeEventListener('dronetv:open-chat', handleCustomOpen)
   }, [])
 

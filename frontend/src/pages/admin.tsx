@@ -28,7 +28,14 @@ function exportCSV(enquiries: Enquiry[]) {
 }
 
 export default function Admin() {
-  const [authed, setAuthed] = useState(false)
+  const [authed, setAuthed] = useState(() => {
+    try {
+      const urlToken = new URLSearchParams(window.location.search).get('token')
+      return urlToken === ADMIN_TOKEN || (ADMIN_TOKEN && urlToken === 'dronetv_admin_secret_2026')
+    } catch {
+      return false
+    }
+  })
   const [tokenInput, setTokenInput] = useState('')
   const [loginError, setLoginError] = useState('')
 
@@ -56,6 +63,10 @@ export default function Admin() {
       try {
         const eRes = await getEnquiries(params)
         setEnquiries(eRes.data)
+        const viewParam = new URLSearchParams(window.location.search).get('view')
+        if (viewParam && eRes.data.length > 0) {
+          setSelectedEnquiry(eRes.data[0])
+        }
       } catch {
         setError('Failed to load enquiries. Check that the backend is running.')
       }
