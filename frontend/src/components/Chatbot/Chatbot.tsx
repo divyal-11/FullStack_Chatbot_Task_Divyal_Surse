@@ -4,73 +4,100 @@ import { submitEnquiry } from '../../utils/api'
 import type { UserType } from '../../types'
 import './Chatbot.css'
 
+// ── Predefined Questions per Assignment Specification ───────────────────────
+export const PREDEFINED_QUESTIONS = [
+  'What services does DroneTV provide?',
+  'What courses / training are available?',
+  'How can I contact DroneTV?',
+  'How can I register?',
+  'I am interested in a service.',
+  'I am a student.',
+  'I want to speak with someone.',
+]
+
 // ── Rule-Based Response Engine ─────────────────────────────────────────────
 const RESPONSES: { keywords: string[]; reply: string; chips?: string[]; showForm?: boolean }[] = [
   {
     keywords: ['hello', 'hi', 'hey', 'greetings', 'morning', 'evening'],
     reply: "Hello! Welcome to DroneTV. I'm your AI flight and training assistant. How can I assist you today?",
-    chips: ['Tell me about services', 'What courses do you offer?', 'I am interested in a service', 'Speak to someone'],
+    chips: PREDEFINED_QUESTIONS,
   },
   {
-    keywords: ['services', 'what do you do', 'offer', 'solutions', 'capability'],
-    reply: "🚁 DroneTV delivers precision aerial solutions across India:\n• Aerial Survey & 3D LiDAR Mapping\n• DGCA Certified Pilot Training\n• Thermal & Industrial Inspection\n• Precision Agriculture & NDVI\n\nWhich service would you like to explore?",
-    chips: ['Aerial Survey', 'Thermal Inspection', 'DGCA Training', 'Speak to someone'],
+    keywords: ['services does dronetv provide', 'what services', 'services', 'what do you do', 'offer', 'solutions', 'capability'],
+    reply: "🚁 DroneTV delivers precision enterprise aerial solutions across India:\n• Aerial Survey & 3D LiDAR Mapping (CAD/GIS & centimeter-grade photogrammetry)\n• DGCA Certified Pilot Training (RPC Certification & BVLOS)\n• Thermal & Industrial Inspection (Radiometric substation, solar & flare-stack audits)\n• Precision Agriculture (Multispectral NDVI health indexing)\n\nWhich service or course would you like to explore?",
+    chips: ['I am interested in a service.', 'What courses / training are available?', 'How can I contact DroneTV?', 'I want to speak with someone.'],
   },
   {
-    keywords: ['course', 'training', 'pilot', 'learn', 'dgca', 'certification', 'license', 'rpc'],
-    reply: "🎓 DroneTV Training Programmes:\n• DGCA Remote Pilot Course (30 days — ₹45,000)\n• Night Operations & BVLOS (5 days — ₹18,000)\n• Drone Assembly & Maintenance (7 days — ₹12,000)\n\nAll courses are conducted with practical airfield flying at our Mumbai facility.",
-    chips: ['Register as student', 'Course fees', 'Eligibility details', 'Register now'],
+    keywords: ['courses / training are available', 'training are available', 'courses are available', 'course', 'training', 'pilot', 'learn', 'dgca', 'certification', 'license', 'rpc'],
+    reply: "🎓 DroneTV Training Programmes (DGCA Authorised):\n• DGCA Remote Pilot Course (30 days — ₹45,000)\n• Night Operations & BVLOS (5 days — ₹18,000)\n• Drone Assembly & Maintenance (7 days — ₹12,000)\n\nAll courses include dual-control simulator flight hours and live airfield sorties at our Mumbai facility.",
+    chips: ['How can I register?', 'I am a student.', 'What services does DroneTV provide?', 'I want to speak with someone.'],
   },
   {
-    keywords: ['student', 'eligibility', 'admission', 'qualify', 'age'],
-    reply: "👨‍🎓 Student & Pilot Admissions:\n• Eligibility: Minimum 10th Pass, Age 18+\n• Includes theory ground school, simulator flights, field flying, and DGCA exam preparation.\n\nWould you like to register or speak with an admissions counsellor?",
-    chips: ['Register as student', 'Course fees', 'Speak to someone'],
-  },
-  {
-    keywords: ['register', 'enrol', 'enroll', 'admission', 'apply', 'join'],
-    reply: "You can register for any DGCA pilot course or technical training right here! Please provide your details below and our training coordinator will confirm your batch schedule. 👇",
+    keywords: ['contact dronetv', 'how can i contact', 'contact', 'reach', 'email', 'address', 'location', 'office', 'mumbai'],
+    reply: "📍 DroneTV Operations Desk:\n• Location: Mumbai, Maharashtra, India\n• Direct Phone: +91 98765 43210\n• Email: hello@dronetv.in\n• Hours: Mon–Sat, 9:00 AM – 6:00 PM IST\n\nYou can also submit an enquiry directly below and our coordinator will get in touch! 👇",
     showForm: true,
-    chips: [],
+    chips: ['I want to speak with someone.', 'What services does DroneTV provide?', 'How can I register?'],
   },
   {
-    keywords: ['interested in a service', 'interested', 'survey service', 'inspection service', 'quote', 'hire'],
-    reply: "Excellent! We provide full-scope aerial survey, LiDAR mapping, and thermal inspections. Fill out the quick mission enquiry card below to receive a custom project estimate! 👇",
+    keywords: ['how can i register', 'register', 'enrol', 'enroll', 'admission', 'apply', 'join', 'seat'],
+    reply: "You can register for any DGCA pilot course or training batch right here! Please submit your details below and our academy coordinator will reserve your seat and confirm your batch schedule. 👇",
     showForm: true,
-    chips: [],
+    chips: ['What courses / training are available?', 'I am a student.', 'I want to speak with someone.'],
   },
   {
-    keywords: ['speak to someone', 'call', 'human', 'agent', 'phone', 'representative', 'talk'],
-    reply: "📞 You can speak directly with our flight operations desk at +91 98765 43210 (Mon–Sat, 9:00 AM – 6:00 PM IST) or submit your details below for a direct callback! 👇",
+    keywords: ['interested in a service', 'interested', 'survey service', 'inspection service', 'quote', 'hire', 'estimate', 'project'],
+    reply: "Excellent! We provide full-scope aerial survey, LiDAR mapping, and thermal inspections across India. Fill out your project details below to receive a custom mission quote! 👇",
     showForm: true,
-    chips: [],
+    chips: ['What services does DroneTV provide?', 'I want to speak with someone.', 'How can I contact DroneTV?'],
   },
   {
-    keywords: ['contact', 'reach', 'email', 'address', 'location', 'office', 'mumbai'],
-    reply: "📍 DroneTV Operations Desk:\n• Location: Mumbai, Maharashtra, India\n• Email: hello@dronetv.in\n• Phone: +91 98765 43210\n• Hours: Mon–Sat, 9:00 AM – 6:00 PM IST\n\nYou can also submit an enquiry form right here.",
-    chips: ['Speak to someone', 'Register as student', 'Explore services'],
+    keywords: ['i am a student', 'student', 'eligibility', 'qualify', 'age limit', 'admissions'],
+    reply: "👨‍🎓 Student & Pilot Admissions:\n• Eligibility: Minimum 10th Pass, Age 18+, Valid Government ID\n• Training: Classroom ground school, regulations, flight simulator, and practical field flying\n• Certification: Official DGCA Remote Pilot Certificate with placement assistance\n\nWould you like to register or speak with an admissions counsellor?",
+    chips: ['How can I register?', 'What courses / training are available?', 'I want to speak with someone.'],
+  },
+  {
+    keywords: ['speak with someone', 'speak to someone', 'someone', 'call', 'human', 'agent', 'phone', 'representative', 'talk'],
+    reply: "📞 You can connect directly with our flight operations desk at +91 98765 43210 (Mon–Sat, 9:00 AM – 6:00 PM IST), or submit your details below for a direct callback within 24 hours! 👇",
+    showForm: true,
+    chips: ['How can I register?', 'I am interested in a service.', 'What services does DroneTV provide?'],
   },
   {
     keywords: ['fee', 'cost', 'price', 'rate', 'how much', 'pricing'],
-    reply: "💰 Certified Programme Fees:\n• DGCA Remote Pilot: ₹45,000 (30 Days)\n• Night Ops & BVLOS: ₹18,000 (5 Days)\n• Drone Assembly: ₹12,000 (7 Days)\n\nFor commercial aerial survey projects, quotes are scoped by area and deliverables.",
-    chips: ['Register now', 'Interested in a service', 'Speak to someone'],
-  },
-  {
-    keywords: ['thermal', 'inspection', 'pipeline', 'solar', 'tower'],
-    reply: "🔍 Thermal & Industrial Inspection:\nWe use radiometric infrared sensors to safely audit high-voltage transmission towers, wind turbines, and industrial assets without risky scaffolding. Reports include georeferenced thermal orthomosaics.",
-    chips: ['Interested in a service', 'Speak to someone'],
-  },
-  {
-    keywords: ['survey', 'mapping', 'lidar', 'photogrammetry', '3d', 'dem'],
-    reply: "🗺️ Aerial Survey & 3D Mapping:\nCentimetre-accurate orthomosaics, digital elevation models, and point clouds using aerial LiDAR and photogrammetry. Deliverables include CAD, GIS, and Pix4D formats.",
-    chips: ['Interested in a service', 'Speak to someone'],
+    reply: "💰 Certified Programme Fees:\n• DGCA Remote Pilot: ₹45,000 (30 Days)\n• Night Ops & BVLOS: ₹18,000 (5 Days)\n• Drone Assembly: ₹12,000 (7 Days)\n\nCommercial aerial surveys are scoped per mission area and deliverables.",
+    chips: ['How can I register?', 'I am interested in a service.', 'I want to speak with someone.'],
   },
 ]
 
-const FALLBACK_REPLY = "I want to make sure you get the exact information you need. Our aviation coordinators can assist you directly with custom surveys or course admissions. Would you like to speak to someone or submit a quick enquiry?"
-const FALLBACK_CHIPS = ['Tell me about services', 'What courses do you offer?', 'Interested in a service', 'Speak to someone']
+const FALLBACK_REPLY = "I want to make sure you get the exact information you need. Our aviation coordinators can assist you directly with custom surveys or course admissions. Would you like to explore any of the options below, or submit an enquiry?"
+const FALLBACK_CHIPS = PREDEFINED_QUESTIONS
 
 function getResponse(input: string): { reply: string; chips: string[]; showForm?: boolean } {
   const lower = input.toLowerCase().trim()
+
+  // Exact matching against predefined questions
+  if (lower.includes('service') && (lower.includes('dronetv provide') || lower.includes('what services'))) {
+    return { reply: RESPONSES[1].reply, chips: RESPONSES[1].chips || FALLBACK_CHIPS, showForm: RESPONSES[1].showForm }
+  }
+  if (lower.includes('course') || lower.includes('training are available')) {
+    return { reply: RESPONSES[2].reply, chips: RESPONSES[2].chips || FALLBACK_CHIPS, showForm: RESPONSES[2].showForm }
+  }
+  if (lower.includes('contact') && !lower.includes('speak')) {
+    return { reply: RESPONSES[3].reply, chips: RESPONSES[3].chips || FALLBACK_CHIPS, showForm: RESPONSES[3].showForm }
+  }
+  if (lower.includes('register') || lower.includes('enroll') || lower.includes('enrol')) {
+    return { reply: RESPONSES[4].reply, chips: RESPONSES[4].chips || FALLBACK_CHIPS, showForm: RESPONSES[4].showForm }
+  }
+  if (lower.includes('interested in a service') || (lower.includes('interested') && lower.includes('service'))) {
+    return { reply: RESPONSES[5].reply, chips: RESPONSES[5].chips || FALLBACK_CHIPS, showForm: RESPONSES[5].showForm }
+  }
+  if (lower.includes('student') || lower.includes('i am a student')) {
+    return { reply: RESPONSES[6].reply, chips: RESPONSES[6].chips || FALLBACK_CHIPS, showForm: RESPONSES[6].showForm }
+  }
+  if (lower.includes('speak with someone') || lower.includes('speak to someone') || lower.includes('speak') || lower.includes('call')) {
+    return { reply: RESPONSES[7].reply, chips: RESPONSES[7].chips || FALLBACK_CHIPS, showForm: RESPONSES[7].showForm }
+  }
+
+  // Keyword check
   for (const r of RESPONSES) {
     if (r.keywords.some(k => lower.includes(k))) {
       return { reply: r.reply, chips: r.chips || FALLBACK_CHIPS, showForm: r.showForm }
@@ -92,16 +119,11 @@ const INITIAL_MESSAGES: Message[] = [
   {
     id: '0',
     role: 'bot',
-    text: "Welcome to DroneTV. I'm your technical flight & training assistant. How can I help with services, DGCA courses, or project planning today?",
+    text: "Welcome to DroneTV. I'm your technical flight & training assistant. Select a common query below or ask anything about our DGCA courses and aerial services:",
   },
 ]
 
-const INITIAL_CHIPS = [
-  'Tell me about services',
-  'What courses do you offer?',
-  'Interested in a service',
-  'Speak to someone',
-]
+const INITIAL_CHIPS = PREDEFINED_QUESTIONS
 
 // ── Component ──────────────────────────────────────────────────────────────
 export default function Chatbot() {
@@ -198,10 +220,20 @@ export default function Chatbot() {
                 </div>
               </div>
               <div className="chatbot-header-actions">
-                <button className="chatbot-action-btn" onClick={handleClear} title="Clear conversation" aria-label="Reset chat">
+                <button 
+                  className="chatbot-action-btn" 
+                  onClick={handleClear} 
+                  title="Reset conversation (Clear history)" 
+                  aria-label="Reset chat"
+                >
                   ↺
                 </button>
-                <button className="chatbot-action-btn" onClick={() => setOpen(false)} title="Close" aria-label="Close chat">
+                <button 
+                  className="chatbot-action-btn" 
+                  onClick={() => setOpen(false)} 
+                  title="Close" 
+                  aria-label="Close chat"
+                >
                   ✕
                 </button>
               </div>
@@ -227,9 +259,9 @@ export default function Chatbot() {
 
                     {/* Embedded Lead Capture Form */}
                     {msg.showForm && !msg.formSubmitted && (
-                      <InChatLeadForm onSubmit={(name) => {
+                      <InChatLeadForm onSubmit={(name, email) => {
                         setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, formSubmitted: true } : m))
-                        addBotResponse(`Thank you, ${name}! Your details have been submitted. Our aviation coordinator will contact you directly within 24 hours.`)
+                        addBotResponse(`Thank you, ${name}! Your enquiry has been received. Our coordinator will contact you directly at ${email} within 24 hours.`)
                         setChips(INITIAL_CHIPS)
                       }} />
                     )}
@@ -328,32 +360,74 @@ export default function Chatbot() {
   )
 }
 
-// ── In-Chat Lead Form Component ─────────────────────────────────────────────
-function InChatLeadForm({ onSubmit }: { onSubmit: (name: string) => void }) {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', userType: '' as UserType | '', interest: '' })
+// ── In-Chat Lead Form Component (Part 3 Specification) ─────────────────────
+function InChatLeadForm({ onSubmit }: { onSubmit: (name: string, email: string) => void }) {
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    userType: '' as UserType | '',
+    interest: '',
+    message: '',
+  })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.name || !form.email || !form.userType) {
-      setError('Please provide name, email, and profile type.')
+
+    // Validate Name
+    if (!form.name.trim() || form.name.trim().length < 2) {
+      setError('Please enter your full name (at least 2 characters).')
       return
     }
+
+    // Validate Email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(form.email.trim())) {
+      setError('Please enter a valid email address.')
+      return
+    }
+
+    // Validate Phone
+    const phoneRegex = /^\+?[0-9\s\-()]{7,20}$/
+    if (!phoneRegex.test(form.phone.trim())) {
+      setError('Please enter a valid phone number (at least 7 digits).')
+      return
+    }
+
+    // Validate User Type
+    if (!form.userType) {
+      setError('Please select your user type (Student / Customer / Other).')
+      return
+    }
+
+    // Validate Interest
+    if (!form.interest.trim() || form.interest.trim().length < 2) {
+      setError('Please select or specify your service or course of interest.')
+      return
+    }
+
+    // Validate Message
+    if (!form.message.trim() || form.message.trim().length < 5) {
+      setError('Please enter a brief message (at least 5 characters).')
+      return
+    }
+
     setSubmitting(true)
     setError('')
     try {
       await submitEnquiry({
-        name: form.name,
-        email: form.email,
-        phone: form.phone || 'N/A',
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
         userType: form.userType as UserType,
-        interest: form.interest || 'General Technical Enquiry',
-        message: `Chatbot enquiry logged by ${form.name}`,
+        interest: form.interest.trim(),
+        message: form.message.trim(),
       })
-      onSubmit(form.name)
+      onSubmit(form.name.trim(), form.email.trim())
     } catch {
-      setError('Submission could not reach backend. Please try again.')
+      setError('Failed to submit enquiry. Please check connection and try again.')
     } finally {
       setSubmitting(false)
     }
@@ -362,49 +436,100 @@ function InChatLeadForm({ onSubmit }: { onSubmit: (name: string) => void }) {
   return (
     <form className="chat-lead-form" onSubmit={handleSubmit}>
       <p className="chat-lead-title">📋 Direct Enquiry Routing</p>
+      
+      {/* 1. Name */}
       <input
         className="chat-lead-input"
         placeholder="Full name *"
         value={form.name}
-        onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
+        onChange={e => {
+          setForm(p => ({ ...p, name: e.target.value }))
+          if (error) setError('')
+        }}
         required
       />
+
+      {/* 2. Email */}
       <input
         className="chat-lead-input"
         placeholder="Email address *"
         type="email"
         value={form.email}
-        onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+        onChange={e => {
+          setForm(p => ({ ...p, email: e.target.value }))
+          if (error) setError('')
+        }}
         required
       />
+
+      {/* 3. Phone */}
       <input
         className="chat-lead-input"
-        placeholder="Phone number (optional)"
+        placeholder="Phone number *"
         type="tel"
         value={form.phone}
-        onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
+        onChange={e => {
+          setForm(p => ({ ...p, phone: e.target.value }))
+          if (error) setError('')
+        }}
+        required
       />
+
+      {/* 4. User Type (Student / Customer / Other) */}
       <select
         className="chat-lead-select"
         value={form.userType}
-        onChange={e => setForm(p => ({ ...p, userType: e.target.value as UserType }))}
+        onChange={e => {
+          setForm(p => ({ ...p, userType: e.target.value as UserType }))
+          if (error) setError('')
+        }}
         required
       >
-        <option value="">Profile type... *</option>
-        <option value="STUDENT">Student / Pilot Candidate</option>
-        <option value="CUSTOMER">Business / Commercial Client</option>
-        <option value="OTHER">Other Technical Query</option>
+        <option value="">User type (Student / Customer / Other) *</option>
+        <option value="STUDENT">Student</option>
+        <option value="CUSTOMER">Customer</option>
+        <option value="OTHER">Other</option>
       </select>
-      <input
-        className="chat-lead-input"
-        placeholder="Area of interest (optional)"
+
+      {/* 5. Service or Course of Interest */}
+      <select
+        className="chat-lead-select"
         value={form.interest}
-        onChange={e => setForm(p => ({ ...p, interest: e.target.value }))}
+        onChange={e => {
+          setForm(p => ({ ...p, interest: e.target.value }))
+          if (error) setError('')
+        }}
+        required
+      >
+        <option value="">Service or course of interest... *</option>
+        <option value="DGCA Remote Pilot Certificate (RPC)">DGCA Remote Pilot Certificate (RPC)</option>
+        <option value="Night Operations & BVLOS Certification">Night Operations & BVLOS Certification</option>
+        <option value="Drone Assembly & Maintenance">Drone Assembly & Maintenance</option>
+        <option value="Aerial Survey & 3D LiDAR Mapping">Aerial Survey & 3D LiDAR Mapping</option>
+        <option value="Thermal & Industrial Inspection">Thermal & Industrial Inspection</option>
+        <option value="Precision Agriculture & Crop Health">Precision Agriculture & Crop Health</option>
+        <option value="General Technical Enquiry">General Technical Enquiry</option>
+      </select>
+
+      {/* 6. Message */}
+      <textarea
+        className="chat-lead-textarea"
+        placeholder="Message / project details *"
+        rows={2}
+        value={form.message}
+        onChange={e => {
+          setForm(p => ({ ...p, message: e.target.value }))
+          if (error) setError('')
+        }}
+        required
       />
-      {error && <p style={{ fontSize: '0.75rem', color: '#f87171' }}>{error}</p>}
+
+      {error && <p className="chat-lead-error">{error}</p>}
+
       <button type="submit" className="chat-lead-submit" disabled={submitting}>
-        {submitting ? 'Submitting...' : 'Submit to Coordinator →'}
+        {submitting ? 'Submitting Enquiry...' : 'Submit Enquiry →'}
       </button>
     </form>
   )
 }
+

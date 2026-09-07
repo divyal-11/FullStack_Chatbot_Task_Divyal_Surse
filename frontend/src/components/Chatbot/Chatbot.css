@@ -318,21 +318,34 @@
 }
 
 .chat-lead-input,
-.chat-lead-select {
+.chat-lead-select,
+.chat-lead-textarea {
   background: var(--bg-primary);
   border: 1px solid var(--lines);
   border-radius: var(--radius);
   padding: 0.55rem 0.75rem;
   color: #ffffff;
   font-size: 0.82rem;
+  font-family: inherit;
   outline: none;
   width: 100%;
   transition: border-color 0.2s ease;
+  resize: vertical;
 }
 
 .chat-lead-input:focus,
-.chat-lead-select:focus {
+.chat-lead-select:focus,
+.chat-lead-textarea:focus {
   border-color: var(--accent);
+}
+
+.chat-lead-error {
+  font-size: 0.76rem;
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+  border-left: 2px solid #f87171;
+  padding: 0.35rem 0.5rem;
+  border-radius: 4px;
 }
 
 .chat-lead-submit {
