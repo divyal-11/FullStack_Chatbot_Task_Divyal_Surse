@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
 import gsap from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
@@ -134,9 +134,6 @@ export default function Navbar() {
 
         {/* Header Action */}
         <div className="navbar-action">
-          <Link to="/admin" className="navbar-admin-link">
-            Admin
-          </Link>
           <button className="btn-primary navbar-cta" onClick={() => scrollToSection('contact')}>
             Get a Quote
           </button>
@@ -168,15 +165,7 @@ export default function Navbar() {
               </button>
             )
           })}
-          <div className="mobile-cta-wrap" style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-            <Link 
-              to="/admin" 
-              className="btn-secondary" 
-              style={{ width: '100%', textAlign: 'center', justifyContent: 'center' }}
-              onClick={() => setMenuOpen(false)}
-            >
-              Admin Dashboard
-            </Link>
+          <div className="mobile-cta-wrap">
             <button 
               className="btn-primary" 
               style={{ width: '100%' }} 

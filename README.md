@@ -68,7 +68,7 @@ This project strictly fulfills all requirements of the **IPAGE Group Full Stack 
 - **Unknown-Question Fallback**: Graceful guidance for unmatched queries, suggesting follow-up chips or prompting enquiry routing.
 
 ### 3. Administrative Enquiry Portal (`/admin`)
-- **Navbar Access & Direct Route**: Accessible directly via the **Admin** button in the top navigation bar or via the direct route `/admin`.
+- **Direct URL Access Only**: Accessible only via direct URL (`/admin`) — intentionally unlinked from public navigation. The admin route is never linked from any public-facing page or navbar.
 - **Real-Time KPI Cards**: Live counters for **Total Leads**, **New**, **Contacted**, **In Progress**, and **Closed**.
 - **Search & Multi-Filtering**: Instant search by Name, Email, or Interest with tabbed filters for User Type (`All Types`, `Student`, `Customer`, `Other`) and Status (`All Status`, `New`, `Contacted`, `In Progress`, `Closed`).
 - **Detailed Modal Inspection**: "View" button opens an inspector displaying all lead fields and timestamp logs.
@@ -82,6 +82,7 @@ This project strictly fulfills all requirements of the **IPAGE Group Full Stack 
 - **Backend Schema Validation**: Strict Zod validation returning structured HTTP `400 Bad Request` messages.
 - **Error Concealment**: Server/database runtime failures return generic HTTP `500` messages, concealing stack traces and internal connection strings.
 - **Non-Existent Records**: Missing enquiry IDs return clean HTTP `404 Not Found` messages (`{"error": "Enquiry not found"}`).
+- **Admin Token Authentication**: All admin API routes require an `x-admin-token` header matching `ADMIN_TOKEN`. Missing or incorrect tokens return `401 Unauthorized`. The frontend password gate collects this token from the user and sends it on every protected request.
 
 ---
 
@@ -148,7 +149,6 @@ fullstack-chatbot-task/
 │   ├── vercel.json                 # Vercel SPA client-side routing rewrites
 │   └── vite.config.ts
 ├── API.md                          # Standalone REST API documentation
-├── DroneTV_Assignment_Blueprint.md
 └── README.md
 ```
 
@@ -311,6 +311,8 @@ Complete details and cURL examples are available in [API.md](API.md).
 | `PUT` | `/api/enquiries/:id` | Protected | Update enquiry status / fields | `{ status }` |
 | `PATCH` | `/api/enquiries/:id` | Protected | Update enquiry status / fields | `{ status }` |
 | `DELETE` | `/api/enquiries/:id` | Protected | Delete enquiry record | — |
+
+> **Protected routes** require an `x-admin-token: <ADMIN_TOKEN>` request header. Requests with a missing or incorrect token receive `401 Unauthorized`.
 
 ### Sample `POST /api/enquiries` Request
 ```bash
