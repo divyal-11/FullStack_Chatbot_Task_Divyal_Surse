@@ -6,17 +6,20 @@ This project strictly fulfills all requirements of the **IPAGE Group Full Stack 
 
 ---
 
-## 🌐 Live Demo Links
+## 🌐 Live Demo & Submission Links
 
 | Component | Platform | URL |
 |---|---|---|
+| **Video Walkthrough (5–10 min)** | Loom / YouTube / Drive | **[Watch Demo Video (Click Here) ↗](YOUR_VIDEO_URL_HERE)** |
 | **Frontend Application** | Vercel | [https://full-stack-chatbot-task-divyal-surs.vercel.app](https://full-stack-chatbot-task-divyal-surs.vercel.app) |
 | **Backend REST API** | Render | [https://fullstack-chatbot-task-divyal-surse.onrender.com](https://fullstack-chatbot-task-divyal-surse.onrender.com) |
 | **Cloud Database** | Neon PostgreSQL | Hosted on AWS (`ap-southeast-1`) via Serverless Pooler |
 | **Admin Dashboard** | Direct Route | [https://full-stack-chatbot-task-divyal-surs.vercel.app/admin](https://full-stack-chatbot-task-divyal-surs.vercel.app/admin) |
 | **API Health Probe** | Public Endpoint | [https://fullstack-chatbot-task-divyal-surse.onrender.com/api/health](https://fullstack-chatbot-task-divyal-surse.onrender.com/api/health) |
 
-> **Admin Access**: Protected administrative operations and the admin dashboard require authentication using your configured `ADMIN_TOKEN` / `VITE_ADMIN_TOKEN`.
+> 🔑 **Admin Access for Evaluation**: Access the Admin Dashboard via direct URL at `/admin`. Enter the token: **`dronetv_admin_secret_2026`** to unlock live enquiry management.
+
+> 📹 **Video Walkthrough**: A complete 5–10 minute end-to-end technical demonstration covering the React frontend, interactive AI chatbot, REST API, Neon PostgreSQL database, admin management console, and error handling. Replace `YOUR_VIDEO_URL_HERE` above with your video recording link.
 
 ---
 
