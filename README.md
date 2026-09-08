@@ -35,11 +35,15 @@ This project strictly fulfills all requirements of the **IPAGE Group Full Stack 
 *Rule-based AI assistant with quick-reply chips, conversation reset, and in-chat lead enquiry form:*
 ![Chatbot Lead Form](docs/screenshots/chatbot.png)
 
-### 4. Admin Management Dashboard (`/admin`)
+### 4. Contact & Direct Enquiry Form
+*Direct enquiry form with Aviation Operations Desk contact details and mission scope fields:*
+![Contact Page](docs/screenshots/contact.png)
+
+### 5. Admin Management Dashboard (`/admin`)
 *Real-time KPI overview cards, search bar, Student/Customer filter tabs, and full enquiries table:*
 ![Admin Dashboard](docs/screenshots/admin.png)
 
-### 5. Enquiry Inspection Modal & Lifecycle Management
+### 6. Enquiry Inspection Modal & Lifecycle Management
 *Modal displaying complete lead details, timestamp metadata, and live status updater:*
 ![Admin Details Modal](docs/screenshots/modal.png)
 
